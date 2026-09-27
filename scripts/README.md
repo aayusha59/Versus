@@ -30,12 +30,14 @@ mints a set of 5,000 per market, creates the YES/pairA and NO/pairB pools at 50/
 first, so re-running continues where it stopped. Market PDAs use nonces 1..3 per operator.
 
 ```
-pnpm --filter scripts bootstrap -- [--fee-bps 100] [--seed-usd 250000] [--skip-markets] [--with-test-market]
+pnpm --filter scripts bootstrap -- [--fee-bps 100] [--seed-usd 250000] [--skip-markets] [--with-test-market [--test-nonce 99] [--test-pair aapl-nvda|btc-eth]]
 ```
 
 - `--skip-markets` stages mints and pair/USDC pools before the program is deployed (devnet staging).
-- `--with-test-market` adds a fourth market (nonce 99) whose `resolve_ts + grace` is already in the
-  past so `resolve --manual` and `redeem` can be exercised.
+- `--with-test-market` adds a test market whose `resolve_ts + grace` is already in the past so
+  `resolve` and `redeem` can be exercised. `--test-nonce` picks a fresh one once the last is
+  resolved (default 99). `--test-pair btc-eth` uses the 24/7 crypto feeds, so plain `resolve`
+  settles it through Pyth at any hour; `aapl-nvda` (default) needs equity-feed access or `--manual`.
 
 ### `bet`
 
