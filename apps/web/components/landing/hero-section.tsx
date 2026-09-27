@@ -37,17 +37,6 @@ export default function HeroSection() {
               >
                 Get paid.
               </TextEffect>
-              <TextEffect
-                per="line"
-                preset="fade-in-blur"
-                speedSegment={0.3}
-                delay={0.5}
-                as="p"
-                className="mt-8 max-w-2xl text-pretty text-lg text-muted-foreground bg-black p-1 rounded-md"
-              >
-                Apple or Nvidia. Bitcoin or Ethereum. Every duel is a head-to-head question with a date on it. Back a
-                side, and every trade pays you a fee in that side&apos;s own stock token.
-              </TextEffect>
               <AnimatedGroup
                 variants={{
                   container: {
