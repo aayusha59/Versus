@@ -168,7 +168,7 @@ export function WalletButton({ variant = "outline", size = "md", block, short, c
                           className="row-hover flex w-full items-baseline justify-between gap-4 py-3.5"
                         >
                           <span className="font-semibold text-ink-2">{k.name}</span>
-                          <span className="text-xs text-ink-3">Not installed. Get it</span>
+                          <span className="text-xs text-ink-2">Not installed. Get it</span>
                         </a>
                       )}
                     </li>
@@ -213,7 +213,7 @@ export function WalletButton({ variant = "outline", size = "md", block, short, c
                   {error}
                 </p>
               ) : (
-                <p className="text-xs text-ink-3 mt-3">Phantom, Solflare and Backpack on Solana.</p>
+                <p className="text-xs text-ink-2 mt-3">Phantom, Solflare and Backpack on Solana.</p>
               )}
             </>
           )}

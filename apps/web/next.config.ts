@@ -5,8 +5,8 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   // The monorepo root, so file tracing does not wander up to a stray lockfile in the home directory.
   outputFileTracingRoot: path.join(__dirname, "../../"),
-  // @duel/sdk ships TypeScript source (no build step); Next compiles it like app code.
-  transpilePackages: ["@duel/sdk"],
+  // @versus/sdk ships TypeScript source (no build step); Next compiles it like app code.
+  transpilePackages: ["@versus/sdk"],
   experimental: { optimizePackageImports: ["@solana/web3.js"] },
   webpack: (config, { webpack }) => {
     // Wallet-adapter and web3.js probe Node built-ins; none are needed in the browser bundle.

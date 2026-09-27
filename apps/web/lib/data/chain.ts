@@ -28,7 +28,7 @@ import {
   type RewardEpoch as SdkRewardEpoch,
   type Side as SdkSide,
   type Template as SdkTemplate,
-} from "@duel/sdk/browser";
+} from "@versus/sdk/browser";
 import type {
   BetPreview,
   CreateMarketParams,
@@ -47,7 +47,7 @@ import { DataError, type DuelData, type OddsPoint, type WalletSigner } from "./a
 import { getDeployment, rpcUrlFor, type ChainCluster } from "./deployment";
 
 /**
- * Chain adapter: `DuelData` over `@duel/sdk` for a localnet or devnet deployment.
+ * Chain adapter: `DuelData` over `@versus/sdk` for a localnet or devnet deployment.
  *
  * Reads: one `fetchAllMarkets` (program accounts), one batched fetch of every outcome and
  * pair/USDC pool, one batched fetch of outcome mints and pool vaults, and the connected

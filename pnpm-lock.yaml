@@ -13,9 +13,6 @@ importers:
 
   apps/web:
     dependencies:
-      '@duel/sdk':
-        specifier: workspace:*
-        version: link:../../packages/sdk
       '@radix-ui/react-dialog':
         specifier: ^1.1.15
         version: 1.1.23(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -55,6 +52,9 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.90.0
         version: 5.104.0(react@19.3.0)
+      '@versus/sdk':
+        specifier: workspace:*
+        version: link:../../packages/sdk
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
@@ -126,9 +126,6 @@ importers:
       '@coral-xyz/anchor':
         specifier: ^0.32.1
         version: 0.32.1(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)
-      '@duel/sdk':
-        specifier: workspace:*
-        version: link:../packages/sdk
       '@meteora-ag/cp-amm-sdk':
         specifier: ^1.4.10
         version: 1.4.10(bufferutil@4.1.0)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(utf-8-validate@5.0.10)
@@ -138,6 +135,9 @@ importers:
       '@solana/web3.js':
         specifier: ^1.99.0
         version: 1.99.0(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)
+      '@versus/sdk':
+        specifier: workspace:*
+        version: link:../packages/sdk
       bn.js:
         specifier: ^5.2.1
         version: 5.2.5

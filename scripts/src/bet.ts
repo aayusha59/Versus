@@ -22,7 +22,7 @@ import {
   routingFromDeployment,
   type Odds,
   type Side,
-} from "@duel/sdk";
+} from "@versus/sdk";
 import { CLUSTER, RPC_URL, die, ensureSol, explorerTx, flagNumber, flagString, fmt, getConnection, loadKeypair, parseArgs, walletFor } from "./env.js";
 import { faucet } from "./faucet.js";
 

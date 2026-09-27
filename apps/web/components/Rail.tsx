@@ -34,8 +34,8 @@ export function Rail() {
   return (
     <>
       <aside className="shell-rail hidden lg:flex flex-col pt-12 pb-8">
-        <Link href="/" className="display narrow text-xl leading-none w-fit" aria-label="Duel, back to the board">
-          Duel
+        <Link href="/" className="display narrow text-xl leading-none w-fit" aria-label="Versus, back to the board">
+          Versus
         </Link>
         <p className="serif text-md text-ink-2 mt-2">Paired prediction duels.</p>
 
@@ -69,11 +69,14 @@ export function Rail() {
         </div>
       </aside>
 
-      <header className="lg:hidden pt-4 pb-3 rule-ink border-b border-ink flex items-center justify-between gap-4">
-        <Link href="/" className="display narrow text-lg leading-none" aria-label="Duel, back to the board">
-          Duel
+      <header className="lg:hidden pt-4 pb-3 border-b border-ink flex items-center gap-3">
+        <Link href="/" className="display narrow text-lg leading-none shrink-0" aria-label="Versus, back to the board">
+          Versus
         </Link>
-        <nav aria-label="Primary" className="flex gap-4 text-sm">
+        <nav
+          aria-label="Primary"
+          className="flex gap-3 text-xs uppercase tracking-[0.06em] font-semibold min-w-0 ml-1"
+        >
           {NAV.map((n) => {
             const active = isActive(n.href, pathname);
             return (
@@ -82,8 +85,8 @@ export function Rail() {
                 href={n.href}
                 aria-current={active ? "page" : undefined}
                 className={cx(
-                  "py-1",
-                  active ? "font-semibold underline underline-offset-4 decoration-2" : "text-ink-2",
+                  "py-1 whitespace-nowrap",
+                  active ? "text-ink underline underline-offset-4 decoration-2" : "text-ink-2",
                 )}
               >
                 {n.label}
@@ -91,14 +94,16 @@ export function Rail() {
             );
           })}
         </nav>
-        <WalletButton size="sm" short />
+        <div className="ml-auto shrink-0">
+          <WalletButton size="sm" short />
+        </div>
       </header>
-      <div className="lg:hidden flex items-center justify-between py-1.5 border-b border-rule text-xs text-ink-2">
-        <span className="uppercase tracking-[0.08em]">
+      <div className="lg:hidden flex items-center justify-between gap-3 py-1.5 border-b border-rule text-xs text-ink-2">
+        <span className="uppercase tracking-[0.08em] min-w-0 truncate">
           {network}
-          {rpc ? <span className="normal-case tracking-normal tnum text-ink-3"> {rpc}</span> : null}
+          {rpc ? <span className="normal-case tracking-normal tnum"> {rpc}</span> : null}
         </span>
-        <Clock label={false} />
+        <Clock label={false} className="shrink-0" />
       </div>
     </>
   );

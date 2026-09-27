@@ -1,6 +1,12 @@
 import type { Market } from "@/lib/types";
 import { compactCount, compactUsd, signedPct, token, usd, EN_DASH } from "@/lib/format";
 
+/** A 30-day move. Exactly zero means the feed has no 30-day history yet, not a flat month. */
+function change(v: number): React.ReactNode {
+  if (v === 0) return <span className="text-ink-3 font-normal">no history</span>;
+  return signedPct(v);
+}
+
 interface Row {
   metric: string;
   a: React.ReactNode;
@@ -34,8 +40,8 @@ export function TaleOfTheTape({ market: m }: { market: Market }) {
     },
     {
       metric: "30-day",
-      a: signedPct(m.a.change30d),
-      b: priceAbove ? dash : signedPct(m.b.change30d),
+      a: change(m.a.change30d),
+      b: priceAbove ? dash : change(m.b.change30d),
     },
     {
       metric: "Paid in",

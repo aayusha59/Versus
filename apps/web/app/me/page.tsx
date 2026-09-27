@@ -81,7 +81,7 @@ function CornerRow({ p, m, i, owner }: { p: Position; m: Market; i: number; owne
               Redeem {usd(p.redeemableUsdc)}
             </Button>
           ) : (
-            <span className="text-sm text-ink-3">Nothing to redeem</span>
+            <span className="text-sm text-ink-2">Nothing to redeem</span>
           )
         ) : (
           <LinkButton href={`/d/${m.id}`} variant="outline" size="sm">

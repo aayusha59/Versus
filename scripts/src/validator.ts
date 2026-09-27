@@ -14,7 +14,7 @@ import { spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
-import { CP_AMM_PROGRAM_ID, DUEL_PROGRAM_ID, pythLocalnetAccounts } from "@duel/sdk";
+import { CP_AMM_PROGRAM_ID, DUEL_PROGRAM_ID, pythLocalnetAccounts } from "@versus/sdk";
 import { REPO_DIR, flagNumber, flagString, parseArgs } from "./env.js";
 
 export interface ValidatorOptions {

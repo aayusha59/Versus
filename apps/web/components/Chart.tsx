@@ -111,7 +111,7 @@ export function Chart({ points, aLabel, bLabel, height = 220 }: ChartProps) {
         className="max-w-full"
       >
         <line x1={0} x2={innerW} y1={y(0.5)} y2={y(0.5)} stroke="var(--rule)" strokeWidth={1} />
-        <text x={0} y={y(0.5) - 5} fill="var(--ink-3)" style={labelStyle}>
+        <text x={0} y={y(0.5) - 5} fill="var(--ink-2)" style={labelStyle}>
           50
         </text>
 

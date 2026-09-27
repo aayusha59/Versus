@@ -7,7 +7,7 @@
  */
 import { createAssociatedTokenAccountIdempotentInstruction, createMintToInstruction, getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { Connection, Keypair, PublicKey, Transaction, sendAndConfirmTransaction } from "@solana/web3.js";
-import { loadDeployment, type Deployment } from "@duel/sdk";
+import { loadDeployment, type Deployment } from "@versus/sdk";
 import { CLUSTER, RPC_URL, die, explorerTx, flagString, getConnection, loadKeypair, parseArgs } from "./env.js";
 
 export async function faucet(params: {

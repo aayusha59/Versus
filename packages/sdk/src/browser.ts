@@ -1,5 +1,5 @@
 /**
- * Browser-safe entry (`@duel/sdk/browser`): everything except the Hermes/Pyth receiver client
+ * Browser-safe entry (`@versus/sdk/browser`): everything except the Hermes/Pyth receiver client
  * (`pyth.ts`, whose dependency chain reaches gRPC via jito-ts) and the Node file helpers
  * (`deployments-node.ts`). The web app imports from here; scripts import from the main entry.
  */

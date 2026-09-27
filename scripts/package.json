@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.32.1",
-    "@duel/sdk": "workspace:*",
+    "@versus/sdk": "workspace:*",
     "@meteora-ag/cp-amm-sdk": "^1.4.10",
     "@solana/spl-token": "^0.4.15",
     "@solana/web3.js": "^1.99.0",

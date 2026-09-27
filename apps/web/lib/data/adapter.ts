@@ -39,7 +39,7 @@ export interface Balance {
 
 /**
  * The web app talks to this interface only. `demo.ts` implements it with fixtures
- * and a ticking odds simulator; `chain.ts` wraps `@duel/sdk` over a localnet or devnet deployment.
+ * and a ticking odds simulator; `chain.ts` wraps `@versus/sdk` over a localnet or devnet deployment.
  */
 export interface DuelData {
   readonly network: Network;

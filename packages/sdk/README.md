@@ -1,8 +1,8 @@
-# @duel/sdk
+# @versus/sdk
 
-TypeScript client for paired prediction duels: the `duel` Anchor program, Meteora DAMM v2 pools,
-Pyth prices, bet routing, odds, and rewards math. Two entries: `@duel/sdk` (everything, Node) and
-`@duel/sdk/browser` (everything except `pyth.ts`, whose receiver dependency reaches gRPC through
+TypeScript client for Versus, paired prediction duels: the `duel` Anchor program, Meteora DAMM v2 pools,
+Pyth prices, bet routing, odds, and rewards math. Two entries: `@versus/sdk` (everything, Node) and
+`@versus/sdk/browser` (everything except `pyth.ts`, whose receiver dependency reaches gRPC through
 jito-ts, and the Node file helpers in `deployments-node.ts`). The web app imports the browser entry
 and the deployment JSON statically.
 
@@ -10,8 +10,8 @@ and the deployment JSON statically.
 
 ```ts
 import { Connection, PublicKey } from "@solana/web3.js";
-import devnet from "@duel/sdk/deployments/devnet.json";
-import { DuelClient, parseDeployment, routingFromDeployment, loadMarketPools, buildBetTx } from "@duel/sdk";
+import devnet from "@versus/sdk/deployments/devnet.json";
+import { DuelClient, parseDeployment, routingFromDeployment, loadMarketPools, buildBetTx } from "@versus/sdk";
 
 const connection = new Connection(devnet.rpcUrl, "confirmed");
 const dep = parseDeployment(devnet);
@@ -61,6 +61,6 @@ await wallet.sendTransaction(tx, connection);
 ## Scripts
 
 ```
-pnpm --filter @duel/sdk typecheck
-pnpm --filter @duel/sdk build      # emits dist/
+pnpm --filter @versus/sdk typecheck
+pnpm --filter @versus/sdk build      # emits dist/
 ```

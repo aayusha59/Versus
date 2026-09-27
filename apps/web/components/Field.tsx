@@ -18,7 +18,7 @@ export function Field({ id, label, hint, error, className, children }: FieldProp
         <label htmlFor={id} className="label">
           {label}
         </label>
-        {hint ? <span className="text-xs text-ink-3">{hint}</span> : null}
+        {hint ? <span className="text-xs text-ink-2">{hint}</span> : null}
       </div>
       {children}
       {error ? (

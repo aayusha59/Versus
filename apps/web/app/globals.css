@@ -529,13 +529,13 @@ hr.double {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--ink-3);
+  color: var(--ink-2);
   background: transparent;
   border: 0;
   transition: color 120ms var(--ease-quint);
 }
 .tab:hover {
-  color: var(--ink-2);
+  color: var(--ink);
 }
 .tab[data-state="active"] {
   color: var(--ink);
@@ -645,7 +645,7 @@ hr.double {
   top: 0;
   transform: translateX(-50%);
   font-size: var(--t-xs);
-  color: var(--ink-3);
+  color: var(--ink-2);
   line-height: 1;
   padding-top: 8px;
 }
@@ -713,12 +713,16 @@ hr.double {
   position: relative;
   display: inline-grid;
   justify-items: center;
+  align-items: center;
   min-width: 0.56em;
-  line-height: 0.9;
+  height: 1em;
+  line-height: 1;
   overflow: hidden;
 }
 .flap-face {
   grid-area: 1 / 1;
+  /* Archivo's caps sit high in the em box; nudge so cap-top and baseline clear the cell. */
+  transform: translateY(0.04em);
   backface-visibility: hidden;
   transform-origin: 50% 50%;
   will-change: transform;
@@ -743,18 +747,18 @@ hr.double {
 }
 @keyframes flap-out {
   from {
-    transform: rotateX(0deg);
+    transform: translateY(0.04em) rotateX(0deg);
   }
   to {
-    transform: rotateX(-90deg);
+    transform: translateY(0.04em) rotateX(-90deg);
   }
 }
 @keyframes flap-in {
   from {
-    transform: rotateX(90deg);
+    transform: translateY(0.04em) rotateX(90deg);
   }
   to {
-    transform: rotateX(0deg);
+    transform: translateY(0.04em) rotateX(0deg);
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -803,14 +807,13 @@ hr.double {
 }
 
 .pulse {
-  animation: pulse 1.2s ease-in-out infinite;
+  animation: pulse 700ms var(--ease-quint) infinite alternate;
 }
 @keyframes pulse {
-  0%,
-  100% {
+  from {
     opacity: 1;
   }
-  50% {
+  to {
     opacity: 0.25;
   }
 }
@@ -826,6 +829,11 @@ hr.double {
   .oddsbar-b,
   .oddsbar-gap {
     transition: none;
+  }
+  .overlay,
+  .sheet,
+  .tip {
+    animation: none;
   }
 }
 
@@ -1124,7 +1132,7 @@ hr.double {
 }
 .nav-index {
   font-size: var(--t-xs);
-  color: var(--ink-3);
+  color: var(--ink-2);
   width: 1.6em;
 }
 .nav-link[aria-current="page"] .nav-index {

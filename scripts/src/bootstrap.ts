@@ -27,7 +27,7 @@ import {
   type Deployment,
   type Template,
   type TemplateJson,
-} from "@duel/sdk";
+} from "@versus/sdk";
 import { CLUSTER, PROGRAM_ID_OVERRIDE, RPC_URL, ensureSol, explorerTx, flagNumber, fmt, getConnection, loadKeypair, parseArgs, walletFor } from "./env.js";
 
 const DECIMALS = 6;

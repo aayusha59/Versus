@@ -1,6 +1,6 @@
-import localnetJson from "@duel/sdk/deployments/localnet.json";
-import devnetJson from "@duel/sdk/deployments/devnet.json";
-import { parseDeployment, type Deployment } from "@duel/sdk/browser";
+import localnetJson from "@versus/sdk/deployments/localnet.json";
+import devnetJson from "@versus/sdk/deployments/devnet.json";
+import { parseDeployment, type Deployment } from "@versus/sdk/browser";
 
 /**
  * Which deployment the app is pointed at. `NEXT_PUBLIC_DEPLOYMENT` names a cluster

@@ -29,7 +29,7 @@ import {
   templateArg,
   type Holder,
   type Market,
-} from "@duel/sdk";
+} from "@versus/sdk";
 import { flagString, parseArgs } from "./env.js";
 
 function assert(cond: unknown, msg: string): asserts cond {

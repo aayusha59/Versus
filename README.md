@@ -1,4 +1,4 @@
-# Duel
+# Versus
 
 **Bet on Apple. Get paid in Apple.**
 
@@ -38,7 +38,7 @@ export RPC_URL=http://127.0.0.1:8999
 pnpm --filter scripts bootstrap -- --with-test-market
 
 # terminal 3: web app in chain mode
-NEXT_PUBLIC_DEPLOYMENT=localnet NEXT_PUBLIC_RPC_URL=http://127.0.0.1:8999 pnpm --filter web dev
+NEXT_PUBLIC_DEPLOYMENT=localnet NEXT_PUBLIC_RPC_URL=http://127.0.0.1:8999 pnpm --filter versus-web dev
 
 # terminal 2, after a few bets: pay holders
 pnpm --filter scripts crank -- --once
@@ -46,7 +46,7 @@ pnpm --filter scripts crank -- --once
 
 Open http://localhost:3000. On localnet and devnet the wallet picker offers a Burner test wallet, no extension needed; the rail faucet mints mock USDC. `scripts/README.md` has the full CLI run-through: bet, sell, ledger, `resolve --manual`, redeem. Stop the validator with `wsl -d Ubuntu -- pkill -f solana-test-validator`.
 
-**Demo mode.** `NEXT_PUBLIC_DEMO=1 pnpm --filter web dev` renders every route from fixtures with ticking odds and no network. Default on a fresh checkout.
+**Demo mode.** `NEXT_PUBLIC_DEMO=1 pnpm --filter versus-web dev` renders every route from fixtures with ticking odds and no network. Default on a fresh checkout.
 
 ## Status
 

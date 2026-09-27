@@ -30,7 +30,7 @@ import {
   type Deployment,
   type Market,
   type Side,
-} from "@duel/sdk";
+} from "@versus/sdk";
 import { CLUSTER, RPC_URL, explorerTx, flagNumber, flagString, fmt, getConnection, loadKeypair, parseArgs, walletFor } from "./env.js";
 
 async function main() {

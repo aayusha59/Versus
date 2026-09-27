@@ -1,5 +1,5 @@
 {
-  "name": "@duel/sdk",
+  "name": "@versus/sdk",
   "version": "0.1.0",
   "private": true,
   "type": "module",

@@ -4,7 +4,7 @@ import { config as dotenv } from "dotenv";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { clusterFromRpcUrl, type Cluster } from "@duel/sdk";
+import { clusterFromRpcUrl, type Cluster } from "@versus/sdk";
 
 const here = path.dirname(fileURLToPath(import.meta.url)); // scripts/src
 export const SCRIPTS_DIR = path.resolve(here, "..");

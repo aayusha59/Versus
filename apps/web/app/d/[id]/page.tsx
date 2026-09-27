@@ -152,11 +152,11 @@ function HowItResolves({ market: m }: { market: Market }) {
       <dt>Feeds</dt>
       <dd className="flex flex-col gap-1">
         <span>
-          Pyth {m.a.feedName} <span className="text-xs text-ink-3 break-all">{m.a.feedId}</span>
+          Pyth {m.a.feedName} <span className="text-xs text-ink-2 break-all">{m.a.feedId}</span>
         </span>
         {t.kind !== "PriceAbove" ? (
           <span>
-            Pyth {m.b.feedName} <span className="text-xs text-ink-3 break-all">{m.b.feedId}</span>
+            Pyth {m.b.feedName} <span className="text-xs text-ink-2 break-all">{m.b.feedId}</span>
           </span>
         ) : null}
       </dd>

@@ -17,7 +17,7 @@ import { Keypair, PublicKey, VersionedTransaction } from "@solana/web3.js";
 export const BURNER_WALLET_NAME = "Burner" as WalletName<"Burner">;
 
 /** localStorage key holding the secret key as a JSON byte array. Test funds only. */
-export const BURNER_STORAGE_KEY = "duel:burner-wallet-secret-key";
+export const BURNER_STORAGE_KEY = "versus:burner-wallet-secret-key";
 
 const ICON =
   "data:image/svg+xml;utf8," +

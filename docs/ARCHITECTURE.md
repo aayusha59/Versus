@@ -1,6 +1,6 @@
 # Architecture: Paired Prediction Duels
 
-One page for a technical judge. The on-chain footprint is one small Anchor 0.32 program named `duel`. Everything else is composition of live Solana infrastructure: Meteora DAMM v2 pools, Pyth equity feeds, and xStocks Token-2022 mints.
+One page for a technical judge on Versus. The on-chain footprint is one small Anchor 0.32 program named `duel`. Everything else is composition of live Solana infrastructure: Meteora DAMM v2 pools, Pyth equity feeds, and xStocks Token-2022 mints.
 
 ## 1. What a duel is
 

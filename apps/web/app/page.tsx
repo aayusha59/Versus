@@ -19,6 +19,14 @@ function BoardRow({ m, i, now }: { m: Market; i: number; now: number | null }) {
   const pa = Math.round(a * 100);
   const priceAbove = m.template.kind === "PriceAbove";
   const bName = priceAbove ? "Under" : m.b.label;
+  const when =
+    m.status.kind === "resolved"
+      ? utcDate(m.status.resolvedTs)
+      : now
+        ? m.resolveTs <= now
+          ? resolvesIn(m.resolveTs, now)
+          : `in ${resolvesIn(m.resolveTs, now)}`
+        : utcDateTime(m.resolveTs);
 
   return (
     <Reveal as="li" i={i}>
@@ -35,6 +43,22 @@ function BoardRow({ m, i, now }: { m: Market; i: number; now: number | null }) {
           </div>
           <MarketMatchup market={m} size="xl" as="h2" className="mt-2" />
           <p className="serif text-md text-ink-2 mt-2 max-w-[40ch]">{m.question}</p>
+          <p className="text-xs text-ink-2 mt-3 tnum">
+            <span className="whitespace-nowrap">
+              {resolved ? "Settled " : "Resolves "}
+              <span className="text-ink font-medium">{when}</span>
+            </span>
+            <span aria-hidden="true"> {MIDDOT} </span>
+            <span className="whitespace-nowrap">
+              Paid in <span className="text-side-a font-medium">{m.a.pairSymbol}</span>
+              {!priceAbove ? (
+                <>
+                  {" and "}
+                  <span className="text-side-b font-medium">{m.b.pairSymbol}</span>
+                </>
+              ) : null}
+            </span>
+          </p>
         </div>
 
         <div className="lg:col-span-4 mt-5 lg:mt-1">
@@ -50,34 +74,18 @@ function BoardRow({ m, i, now }: { m: Market; i: number; now: number | null }) {
           <p className="text-sm mt-2">{leadLine(m)}</p>
         </div>
 
-        <div className="lg:col-span-3 mt-5 lg:mt-0 flex items-start justify-between gap-4 lg:flex-col lg:items-stretch">
-          <dl className="dl lg:mt-3">
-            <dt>{resolved ? "Settled" : "Resolves"}</dt>
-            <dd className="tnum whitespace-nowrap">
-              {m.status.kind === "resolved"
-                ? utcDate(m.status.resolvedTs)
-                : now
-                  ? m.resolveTs <= now
-                    ? resolvesIn(m.resolveTs, now)
-                    : `in ${resolvesIn(m.resolveTs, now)}`
-                  : utcDateTime(m.resolveTs)}
-            </dd>
-            <dt>Paid in</dt>
-            <dd>
-              <span className="block whitespace-nowrap">{m.a.pairSymbol}</span>
-              {!priceAbove ? <span className="block whitespace-nowrap">{m.b.pairSymbol}</span> : null}
-            </dd>
-            <dt>Fees out</dt>
-            <dd className="tnum">
-              <span className="block whitespace-nowrap">{token(m.rewardsPaidA, m.a.pairSymbol)}</span>
-              {!priceAbove ? (
-                <span className="block whitespace-nowrap">{token(m.rewardsPaidB, m.b.pairSymbol)}</span>
-              ) : null}
-            </dd>
-          </dl>
-          <div className="lg:order-first lg:self-end">
-            <StatusStamp market={m} />
-          </div>
+        <div className="lg:col-span-3 mt-4 lg:mt-0 flex items-end justify-between gap-4 lg:flex-col lg:items-end">
+          <StatusStamp market={m} className="lg:mt-1" />
+          <p className="text-xs text-ink-2 tnum lg:text-right lg:mt-4">
+            <span className="block whitespace-nowrap">
+              <span className="text-side-a font-medium">{token(m.rewardsPaidA, m.a.pairSymbol)}</span> out
+            </span>
+            {!priceAbove ? (
+              <span className="block whitespace-nowrap">
+                <span className="text-side-b font-medium">{token(m.rewardsPaidB, m.b.pairSymbol)}</span> out
+              </span>
+            ) : null}
+          </p>
         </div>
       </Link>
     </Reveal>
@@ -142,7 +150,7 @@ export default function BoardPage() {
           >
             <span className="col-span-5">Matchup</span>
             <span className="col-span-4">Odds</span>
-            <span className="col-span-3">Card</span>
+            <span className="col-span-3 text-right">Fees paid out</span>
           </Reveal>
           <ol className="hairline-rows">
             {live.map((m, i) => (

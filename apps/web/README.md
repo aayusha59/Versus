@@ -1,6 +1,6 @@
-# Duel web app
+# Versus web app
 
-The board, the duel card, the create form and "My corners" for paired prediction duels on
+Versus: the board, the duel card, the create form and "My corners" for paired prediction duels on
 Solana. Next.js 15 App Router, React 19, Tailwind v4 with the DESIGN.md tokens, Radix primitives
 for behaviour, wallet-adapter for Phantom, Solflare and Backpack (plus a Burner test wallet on
 localnet and devnet).
@@ -9,10 +9,10 @@ localnet and devnet).
 
 ```sh
 pnpm install
-pnpm --filter web dev        # http://localhost:3000, demo mode by default
-pnpm --filter web build      # production build, zero type errors expected
-pnpm --filter web start
-pnpm --filter web typecheck
+pnpm --filter versus-web dev        # http://localhost:3000, demo mode by default
+pnpm --filter versus-web build      # production build, zero type errors expected
+pnpm --filter versus-web start
+pnpm --filter versus-web typecheck
 ```
 
 No wallet, RPC or deployment is needed to browse every route: demo mode is the default.
@@ -44,7 +44,7 @@ RPC_URL=http://127.0.0.1:8999 pnpm --filter scripts bootstrap -- --with-test-mar
 
 # 3. web app in chain mode (or put these three lines in apps/web/.env.local)
 NEXT_PUBLIC_DEPLOYMENT=localnet NEXT_PUBLIC_RPC_URL=http://127.0.0.1:8999 FAUCET_KEYPAIR_PATH=../../scripts/.keys/id.json \
-  pnpm --filter web dev
+  pnpm --filter versus-web dev
 
 # 4. after betting: pay the fees out to holders (once, or every 5 minutes)
 RPC_URL=http://127.0.0.1:8999 pnpm --filter scripts crank -- --once
@@ -82,7 +82,7 @@ exports `getData()`, which picks an adapter:
   you watch, and in-memory positions and balances that update optimistically on bet, sell,
   redeem and faucet. The picker offers a "Demo corner" so `/me` and the bet panel work with no
   extension installed.
-- `lib/data/chain.ts` — `DuelData` over `@duel/sdk/browser` for the localnet or devnet
+- `lib/data/chain.ts` — `DuelData` over `@versus/sdk/browser` for the localnet or devnet
   deployment (`lib/data/deployment.ts` picks the bundled JSON). Every 5 s it fetches all markets
   (`fetchAllMarkets`), every outcome and pair/USDC pool in one batched call, outcome supplies and
   pool vaults, and the connected owner's token accounts; odds come from `oddsFromPools` with pair
@@ -121,6 +121,6 @@ Wallet Standard and is detected automatically. The picker (`components/WalletBut
 Radix Dialog listing the three as hairline rows; there is no wallet-adapter-react-ui or its CSS.
 
 `lib/wallet/burner.ts` adds "Burner (test wallet)": a `BaseSignerWalletAdapter` that generates a
-Keypair, keeps the secret in `localStorage` under `duel:burner-wallet-secret-key`, signs locally
+Keypair, keeps the secret in `localStorage` under `versus:burner-wallet-secret-key`, signs locally
 and reconnects on its own after a reload. It is registered only when the deployment cluster is
 localnet or devnet, never on mainnet. Test funds only.

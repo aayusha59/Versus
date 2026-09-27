@@ -3,7 +3,7 @@ import type { Cluster, Deployment } from "./types.js";
 
 /**
  * Node-only deployment file helpers (`packages/sdk/deployments/<cluster>.json`). Browser code
- * imports the JSON statically instead; see `deployments.ts` and the `@duel/sdk/browser` entry.
+ * imports the JSON statically instead; see `deployments.ts` and the `@versus/sdk/browser` entry.
  */
 
 async function nodeDeps() {

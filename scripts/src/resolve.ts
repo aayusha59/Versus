@@ -9,7 +9,7 @@
  * Flags: --no-cleanup keeps the PriceUpdateV2 accounts (rent) after resolving.
  */
 import { PublicKey } from "@solana/web3.js";
-import { DuelClient, evaluateTemplate, findMarket, getLatestPrices, loadDeployment, postPriceUpdates, templateFeeds, type Side } from "@duel/sdk";
+import { DuelClient, evaluateTemplate, findMarket, getLatestPrices, loadDeployment, postPriceUpdates, templateFeeds, type Side } from "@versus/sdk";
 import { CLUSTER, RPC_URL, die, explorerTx, flagString, getConnection, loadKeypair, parseArgs, walletFor } from "./env.js";
 
 async function main() {

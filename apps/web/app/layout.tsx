@@ -5,8 +5,8 @@ import { Providers } from "./providers";
 import { Rail } from "@/components/Rail";
 
 export const metadata: Metadata = {
-  title: { default: "Duel", template: "%s | Duel" },
-  description: "Paired prediction duels on Solana. Bet on Apple. Get paid in Apple.",
+  title: { default: "Versus", template: "%s | Versus" },
+  description: "Bet on Apple. Get paid in Apple.",
 };
 
 export const viewport: Viewport = {

@@ -42,7 +42,7 @@ function AssetSelect({
       <Select.Root value={value} onValueChange={onChange}>
         <Select.Trigger id={id} className="select-trigger">
           <Select.Value />
-          <span aria-hidden="true" className="text-ink-3 text-xs">
+          <span aria-hidden="true" className="text-ink-2 text-xs">
             {"▾"}
           </span>
         </Select.Trigger>

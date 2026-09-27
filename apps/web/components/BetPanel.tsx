@@ -305,7 +305,7 @@ export function BetPanel({ market }: { market: Market }) {
         </div>
       )}
 
-      <p className={cx("text-xs text-ink-3", owner && "-mt-2")}>
+      <p className={cx("text-xs text-ink-2", owner && "-mt-2")}>
         Routed USDC to {fighter.pairSymbol} to {sideName} in one signature. Fee {bpsPct(market.feeBpsHolders)} to holders.
       </p>
     </form>

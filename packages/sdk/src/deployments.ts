@@ -3,9 +3,9 @@ import type { Cluster, DeployedMarket, Deployment } from "./types.js";
 /**
  * Deployment files live in `packages/sdk/deployments/<cluster>.json` and are written by
  * `scripts/src/bootstrap.ts`. Browser code imports the JSON directly
- * (`import dep from "@duel/sdk/deployments/localnet.json"`) and runs it through `parseDeployment`;
+ * (`import dep from "@versus/sdk/deployments/localnet.json"`) and runs it through `parseDeployment`;
  * Node code calls `loadDeployment(cluster)` from `deployments-node.ts`. This module has no Node
- * imports so it is part of the `@duel/sdk/browser` entry.
+ * imports so it is part of the `@versus/sdk/browser` entry.
  */
 
 export function clusterFromRpcUrl(url: string): Cluster {

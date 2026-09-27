@@ -1,6 +1,6 @@
 # scripts
 
-Operational scripts for the `duel` deployment. Run with `pnpm --filter scripts <name>` (or from the
+Operational scripts for the Versus deployment (the `duel` program). Run with `pnpm --filter scripts <name>` (or from the
 repo root: `pnpm bootstrap:devnet`, `pnpm crank`, `pnpm resolve`). Pass script flags after `--`.
 
 ## Environment
@@ -142,7 +142,7 @@ pnpm --filter scripts faucet -- <your wallet> 1000
 ```
 
 Then the web app in chain mode (`apps/web/README.md`, "Chain mode from a cold start"):
-`NEXT_PUBLIC_DEPLOYMENT=localnet NEXT_PUBLIC_RPC_URL=http://127.0.0.1:8999 pnpm --filter web dev`.
+`NEXT_PUBLIC_DEPLOYMENT=localnet NEXT_PUBLIC_RPC_URL=http://127.0.0.1:8999 pnpm --filter versus-web dev`.
 
 Stop the validator with `wsl -d Ubuntu -- pkill -f solana-test-validator`.
 
