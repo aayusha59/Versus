@@ -85,6 +85,13 @@ export function oddsPair(a: number): string {
   return `${x}${EN_DASH}${100 - x}`;
 }
 
+/** Start ratios: "27.76" at or above 1, three significant digits below it: "0.00306". */
+export function ratio(v: number): string {
+  if (v >= 1) return n2.format(v);
+  const s = v.toPrecision(3);
+  return s.includes("e") ? v.toFixed(6) : s.replace(/(.d*?[1-9])0+$/, "$1").replace(/.0+$/, "");
+}
+
 /** 0.54 -> "54%" */
 export function pct(p: number, dp = 0): string {
   return `${numFmt(dp, dp).format(p * 100)}%`;

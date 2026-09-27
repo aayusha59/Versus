@@ -9,8 +9,9 @@ import { OddsBar } from "./OddsBar";
 import { MarketMatchup } from "./Matchup";
 import { StatusStamp } from "./Stamp";
 import { LinkButton } from "./Button";
+import { FighterLogos } from "./AssetLogo";
 
-/** One duel on the board: tags, matchup, question, odds, two "Back" buttons, a stats footer. */
+/** One duel on the board: tags, the two logos, matchup, question, odds, two "Back" buttons, a stats footer. */
 export function DuelCard({ m, now, i = 0 }: { m: Market; now: number | null; i?: number }) {
   const resolved = m.status.kind === "resolved";
   const a = m.status.kind === "resolved" ? m.status.closingOdds.a : m.odds.a;
@@ -36,6 +37,7 @@ export function DuelCard({ m, now, i = 0 }: { m: Market; now: number | null; i?:
         </div>
 
         <Link href={`/d/${m.id}`} className="block group">
+          <FighterLogos market={m} className="mb-3" />
           <MarketMatchup market={m} size="xl" as="h2" className="group-hover:underline underline-offset-4 decoration-1 decoration-fg-3" />
           <p className="text-sm text-fg-2 mt-2 max-w-[40ch]">{m.question}</p>
         </Link>

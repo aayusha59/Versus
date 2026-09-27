@@ -79,9 +79,10 @@ operator funded first; `packages/sdk/deployments/devnet.json` ships as an empty 
 `lib/data/adapter.ts` is the only interface the UI talks to (`DuelData`). `lib/data/index.ts`
 exports `getData()`, which picks an adapter:
 
-- `lib/data/demo.ts` — three live fixture duels (Apple vs Nvidia, Bitcoin vs Ethereum, Tesla vs
-  Ford) plus one settled (Zcash vs Hyperliquid, Zcash wins), a seeded random walk that ticks the
-  odds every 4 seconds, a ledger of payouts with UTC times and fake signatures that grows while
+- `lib/data/demo.ts` — twenty-one live fixture duels across stocks, crypto, indexes and gold
+  (Apple vs Nvidia, Bitcoin vs Gold, Coinbase vs Robinhood, XRP vs Dogecoin, ...) plus five
+  settled ones (Zcash vs Hyperliquid, Zcash wins, among them), all declared in one `SEEDS` table
+  and numbered in creation order, a seeded random walk that ticks the odds every 4 seconds, a ledger of payouts with UTC times and fake signatures that grows while
   you watch, and in-memory positions and balances that update optimistically on bet, sell,
   redeem and faucet. The picker offers a "Demo corner" so `/me` and the bet panel work with no
   extension installed.
@@ -103,6 +104,11 @@ exports `getData()`, which picks an adapter:
 - `lib/data/devnet.ts` — re-exports the chain adapter under its old name.
 - `app/api/faucet/route.ts` — server route: airdrops 1 SOL (localnet) or tops up from the
   operator (devnet) and mints 1,000 mock USDC with the operator key; refuses on mainnet.
+- `app/api/logo/[symbol]/route.ts` — server route: the fighter logo for a registry symbol. Walks
+  the keyless sources in `lib/logos.ts` (Parqet, then Financial Modeling Prep or CoinCap, then the
+  company favicon via DuckDuckGo), returns the first image with a day-long cache header, 404s
+  otherwise. `components/AssetLogo.tsx` shows a monogram until the image lands and keeps it if
+  the route 404s, so logos never block a card.
 
 `lib/types.ts` mirrors the SDK types (`Market`, `Side`, `Odds`, `Position`, `RewardEpoch`,
 `Template`, `Deployment`) so the chain adapter is a mapping, not a rewrite. React Query sits on

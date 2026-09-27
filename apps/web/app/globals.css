@@ -1170,3 +1170,75 @@ hr.double {
   color: var(--fg-2);
   max-width: 64ch;
 }
+
+/* ------------------------------------------------------------------ */
+/* Fighter logos                                                       */
+/* ------------------------------------------------------------------ */
+
+/* A round tile on a light fill, so black marks and coloured marks both read on the dark card,
+   ringed in the side colour with a card-coloured gap so the pair can overlap. */
+.logo {
+  --logo-size: 40px;
+  --ring: var(--line-2);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--logo-size);
+  height: var(--logo-size);
+  flex: 0 0 var(--logo-size);
+  border-radius: 50%;
+  background: oklch(0.95 0 0);
+  box-shadow:
+    0 0 0 2px var(--ring),
+    0 0 0 4px var(--card);
+  overflow: hidden;
+  transition: opacity 150ms;
+}
+.logo-a {
+  --ring: var(--a);
+}
+.logo-b {
+  --ring: var(--b);
+}
+.logo-mono {
+  font-family: var(--font-mono);
+  font-size: calc(var(--logo-size) * 0.34);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: oklch(0.25 0 0);
+  user-select: none;
+}
+.logo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 200ms;
+}
+.logo-loaded img {
+  opacity: 1;
+}
+/* Transparent marks would otherwise show the monogram through them. */
+.logo-loaded .logo-mono {
+  visibility: hidden;
+}
+.logo-muted {
+  opacity: 0.5;
+}
+.logo-pair {
+  display: inline-flex;
+  align-items: center;
+}
+.logo-pair .logo + .logo {
+  margin-left: calc(var(--logo-size) * -0.22);
+}
+@media (prefers-reduced-motion: reduce) {
+  .logo,
+  .logo img {
+    transition: none;
+  }
+}

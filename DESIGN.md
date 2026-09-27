@@ -60,6 +60,12 @@ App components keep their behaviour from Radix and are skinned by the classes in
 `.pill`, `.corners`, `.tabs-list`, `.oddsbar`, `.flaps` (split-flap tote board digits), `.ledger`,
 `.tape`, `.dl`, `.sheet` (wallet dialog), `.select-*`, `.tip`, `.faq`.
 
+Fighter logos (`AssetLogo`, `.logo`): a round tile on a light neutral fill so black marks and
+coloured marks both read on the dark card, ringed 2px in the side colour with a card-coloured gap,
+shown as an overlapping pair above the matchup on board cards (40px) and the duel header (56px).
+The image comes from `/api/logo/[symbol]`; a two-letter monogram holds the tile until it lands.
+The loser dims to 50% once a duel settles, like `.struck`.
+
 ## 6. Motion
 
 The landing page animates the way the template does: dithered waves in a WebGL canvas
