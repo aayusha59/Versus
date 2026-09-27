@@ -78,6 +78,10 @@ Upgrade path for each: `docs/ARCHITECTURE.md` §8.
 - [`docs/SUBMISSION.md`](docs/SUBMISSION.md): targets, judging criteria, checklist
 - [`docs/PRIOR_ART.md`](docs/PRIOR_ART.md): differentiation, market context
 
+## License
+
+MIT. See [`LICENSE`](LICENSE).
+
 ## Disclaimer
 
 Not offered in restricted jurisdictions, including the United States. Outcome tokens can go to zero. Fee rewards are a redistribution of other traders' fees. xStocks can be paused or seized by their issuer. Not legal or investment advice.
