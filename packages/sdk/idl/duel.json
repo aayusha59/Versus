@@ -1,0 +1,1720 @@
+{
+  "address": "AN2TEyFH3zCsv5MENn2uo9LJx69J2EUC8iScAVeDbW25",
+  "metadata": {
+    "name": "duel",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Paired prediction duels: YES/NO outcome tokens fully collateralized by USDC, resolved by Pyth."
+  },
+  "instructions": [
+    {
+      "name": "create_market",
+      "docs": [
+        "Create a market, its YES/NO mints, the collateral vault and both reward vaults."
+      ],
+      "discriminator": [
+        103,
+        226,
+        97,
+        235,
+        200,
+        188,
+        251,
+        254
+      ],
+      "accounts": [
+        {
+          "name": "creator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "creator"
+              },
+              {
+                "kind": "arg",
+                "path": "params.nonce"
+              }
+            ]
+          }
+        },
+        {
+          "name": "collateral_mint",
+          "docs": [
+            "Collateral (USDC or a mock). SPL Token or Token-2022."
+          ]
+        },
+        {
+          "name": "pair_a_mint",
+          "docs": [
+            "Pair token for side A (e.g. AAPLx). SPL Token or Token-2022."
+          ]
+        },
+        {
+          "name": "pair_b_mint",
+          "docs": [
+            "Pair token for side B (e.g. NVDAx). SPL Token or Token-2022."
+          ]
+        },
+        {
+          "name": "yes_mint",
+          "docs": [
+            "YES outcome mint: classic SPL Token, 6 decimals, authorities = market PDA."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  121,
+                  101,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "no_mint",
+          "docs": [
+            "NO outcome mint: classic SPL Token, 6 decimals, authorities = market PDA."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  110,
+                  111
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "collateral_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "collateral_token_program"
+              },
+              {
+                "kind": "account",
+                "path": "collateral_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "reward_vault_a",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "pair_a_token_program"
+              },
+              {
+                "kind": "account",
+                "path": "pair_a_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "reward_vault_b",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "pair_b_token_program"
+              },
+              {
+                "kind": "account",
+                "path": "pair_b_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "Classic SPL Token program (for the YES/NO mints)."
+          ],
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "collateral_token_program",
+          "docs": [
+            "Token program owning `collateral_mint`."
+          ]
+        },
+        {
+          "name": "pair_a_token_program",
+          "docs": [
+            "Token program owning `pair_a_mint`."
+          ]
+        },
+        {
+          "name": "pair_b_token_program",
+          "docs": [
+            "Token program owning `pair_b_mint`."
+          ]
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": {
+              "name": "CreateMarketParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "deposit_rewards",
+      "docs": [
+        "Deposit pair tokens into a side's reward vault (anyone)."
+      ],
+      "discriminator": [
+        52,
+        249,
+        112,
+        72,
+        206,
+        161,
+        196,
+        1
+      ],
+      "accounts": [
+        {
+          "name": "depositor",
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true
+        },
+        {
+          "name": "pair_mint"
+        },
+        {
+          "name": "reward_vault",
+          "writable": true
+        },
+        {
+          "name": "depositor_token",
+          "writable": true
+        },
+        {
+          "name": "pair_token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "side",
+          "type": {
+            "defined": {
+              "name": "Side"
+            }
+          }
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "distribute",
+      "docs": [
+        "Crank-only: pay `amounts[i]` from the side's reward vault to `remaining_accounts[i]`."
+      ],
+      "discriminator": [
+        191,
+        44,
+        223,
+        207,
+        164,
+        236,
+        126,
+        61
+      ],
+      "accounts": [
+        {
+          "name": "crank",
+          "signer": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "market",
+          "writable": true
+        },
+        {
+          "name": "pair_mint"
+        },
+        {
+          "name": "reward_vault",
+          "writable": true
+        },
+        {
+          "name": "pair_token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "side",
+          "type": {
+            "defined": {
+              "name": "Side"
+            }
+          }
+        },
+        {
+          "name": "amounts",
+          "type": {
+            "vec": "u64"
+          }
+        }
+      ]
+    },
+    {
+      "name": "merge_set",
+      "docs": [
+        "Burn `amount` YES and `amount` NO and withdraw `amount` collateral."
+      ],
+      "discriminator": [
+        138,
+        227,
+        163,
+        223,
+        237,
+        229,
+        120,
+        58
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true
+        },
+        {
+          "name": "collateral_mint",
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "collateral_vault",
+          "writable": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "user_collateral",
+          "writable": true
+        },
+        {
+          "name": "yes_mint",
+          "writable": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "no_mint",
+          "writable": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "user_yes",
+          "writable": true
+        },
+        {
+          "name": "user_no",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "collateral_token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "mint_set",
+      "docs": [
+        "Deposit `amount` collateral and receive `amount` YES and `amount` NO."
+      ],
+      "discriminator": [
+        91,
+        117,
+        1,
+        75,
+        201,
+        110,
+        110,
+        189
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true
+        },
+        {
+          "name": "collateral_mint",
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "collateral_vault",
+          "writable": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "user_collateral",
+          "writable": true
+        },
+        {
+          "name": "yes_mint",
+          "writable": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "no_mint",
+          "writable": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "user_yes",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "account",
+                "path": "token_program"
+              },
+              {
+                "kind": "account",
+                "path": "yes_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "user_no",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "account",
+                "path": "token_program"
+              },
+              {
+                "kind": "account",
+                "path": "no_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "collateral_token_program"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "redeem",
+      "docs": [
+        "Burn `amount` winning tokens and withdraw `amount` collateral."
+      ],
+      "discriminator": [
+        184,
+        12,
+        86,
+        149,
+        70,
+        196,
+        97,
+        225
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true
+        },
+        {
+          "name": "outcome_mint",
+          "docs": [
+            "The winning outcome mint (`yes_mint` if the winner is `Yes`, `no_mint` if `No`)."
+          ],
+          "writable": true
+        },
+        {
+          "name": "user_outcome",
+          "writable": true
+        },
+        {
+          "name": "collateral_mint",
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "collateral_vault",
+          "writable": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "user_collateral",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "collateral_token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "resolve",
+      "docs": [
+        "Permissionless resolution from Pyth `PriceUpdateV2` accounts after `resolve_ts`."
+      ],
+      "discriminator": [
+        246,
+        150,
+        236,
+        206,
+        108,
+        63,
+        58,
+        10
+      ],
+      "accounts": [
+        {
+          "name": "market",
+          "writable": true
+        },
+        {
+          "name": "price_update_a",
+          "docs": [
+            "full verification, feed id, freshness) for feed A (or the single `PriceAbove` feed)."
+          ]
+        },
+        {
+          "name": "price_update_b",
+          "optional": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "resolve_manual",
+      "docs": [
+        "Resolver-only fallback after `resolve_ts + grace_secs`. Prices are USD scaled by 1e6."
+      ],
+      "discriminator": [
+        64,
+        38,
+        4,
+        174,
+        253,
+        126,
+        73,
+        213
+      ],
+      "accounts": [
+        {
+          "name": "resolver",
+          "signer": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "market",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "winner",
+          "type": {
+            "defined": {
+              "name": "Side"
+            }
+          }
+        },
+        {
+          "name": "price_a",
+          "type": "i64"
+        },
+        {
+          "name": "price_b",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "set_pools",
+      "docs": [
+        "Record the Meteora pool addresses. Creator only, once."
+      ],
+      "discriminator": [
+        11,
+        177,
+        121,
+        2,
+        1,
+        113,
+        13,
+        199
+      ],
+      "accounts": [
+        {
+          "name": "creator",
+          "signer": true,
+          "relations": [
+            "market"
+          ]
+        },
+        {
+          "name": "market",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "pool_a",
+          "type": "pubkey"
+        },
+        {
+          "name": "pool_b",
+          "type": "pubkey"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Market",
+      "discriminator": [
+        219,
+        190,
+        213,
+        55,
+        0,
+        227,
+        198,
+        154
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "MarketCreated",
+      "discriminator": [
+        88,
+        184,
+        130,
+        231,
+        226,
+        84,
+        6,
+        58
+      ]
+    },
+    {
+      "name": "MarketResolved",
+      "discriminator": [
+        89,
+        67,
+        230,
+        95,
+        143,
+        106,
+        199,
+        202
+      ]
+    },
+    {
+      "name": "PoolsSet",
+      "discriminator": [
+        152,
+        132,
+        63,
+        46,
+        21,
+        45,
+        19,
+        48
+      ]
+    },
+    {
+      "name": "Redeemed",
+      "discriminator": [
+        14,
+        29,
+        183,
+        71,
+        31,
+        165,
+        107,
+        38
+      ]
+    },
+    {
+      "name": "RewardsDeposited",
+      "discriminator": [
+        120,
+        19,
+        149,
+        33,
+        111,
+        163,
+        248,
+        156
+      ]
+    },
+    {
+      "name": "RewardsPaid",
+      "discriminator": [
+        131,
+        204,
+        160,
+        15,
+        132,
+        68,
+        29,
+        42
+      ]
+    },
+    {
+      "name": "SetMerged",
+      "discriminator": [
+        248,
+        96,
+        180,
+        111,
+        223,
+        109,
+        190,
+        144
+      ]
+    },
+    {
+      "name": "SetMinted",
+      "discriminator": [
+        134,
+        220,
+        152,
+        208,
+        56,
+        170,
+        13,
+        171
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "NotYetResolvable",
+      "msg": "Market cannot be resolved before resolve_ts"
+    },
+    {
+      "code": 6001,
+      "name": "AlreadyResolved",
+      "msg": "Market is already resolved"
+    },
+    {
+      "code": 6002,
+      "name": "NotResolved",
+      "msg": "Market is not resolved yet"
+    },
+    {
+      "code": 6003,
+      "name": "WrongSide",
+      "msg": "Token, mint or vault does not match the requested side"
+    },
+    {
+      "code": 6004,
+      "name": "StaleOracle",
+      "msg": "Oracle price is stale (older than the 6 hour window)"
+    },
+    {
+      "code": 6005,
+      "name": "GraceNotElapsed",
+      "msg": "Manual resolution grace period has not elapsed"
+    },
+    {
+      "code": 6006,
+      "name": "Unauthorized",
+      "msg": "Signer is not authorized for this action"
+    },
+    {
+      "code": 6007,
+      "name": "TooManyRecipients",
+      "msg": "Too many recipients (max 12 per call)"
+    },
+    {
+      "code": 6008,
+      "name": "InsufficientRewards",
+      "msg": "Reward vault balance is insufficient for the requested amounts"
+    },
+    {
+      "code": 6009,
+      "name": "InvalidAmount",
+      "msg": "Amount must be greater than zero"
+    },
+    {
+      "code": 6010,
+      "name": "InvalidParams",
+      "msg": "Invalid market parameters (question or label too long, bad fees or template)"
+    },
+    {
+      "code": 6011,
+      "name": "PoolsAlreadySet",
+      "msg": "Pools have already been set for this market"
+    },
+    {
+      "code": 6012,
+      "name": "InvalidOracleAccount",
+      "msg": "Oracle account is not a Pyth PriceUpdateV2 owned by the Pyth receiver program"
+    },
+    {
+      "code": 6013,
+      "name": "InsufficientVerification",
+      "msg": "Oracle price update does not carry full verification"
+    },
+    {
+      "code": 6014,
+      "name": "FeedMismatch",
+      "msg": "Oracle feed id does not match the market template"
+    },
+    {
+      "code": 6015,
+      "name": "InvalidOraclePrice",
+      "msg": "Oracle price is not positive"
+    },
+    {
+      "code": 6016,
+      "name": "MissingOracle",
+      "msg": "A second oracle account is required for this template"
+    },
+    {
+      "code": 6017,
+      "name": "MathOverflow",
+      "msg": "Arithmetic overflow"
+    },
+    {
+      "code": 6018,
+      "name": "RecipientCountMismatch",
+      "msg": "amounts length must equal the number of recipient accounts"
+    },
+    {
+      "code": 6019,
+      "name": "InvalidRecipient",
+      "msg": "Recipient is not a writable token account of the pair mint"
+    },
+    {
+      "code": 6020,
+      "name": "CollateralShortfall",
+      "msg": "Collateral transfer did not credit the full amount (transfer-fee mints unsupported)"
+    }
+  ],
+  "types": [
+    {
+      "name": "CreateMarketParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "nonce",
+            "type": "u64"
+          },
+          {
+            "name": "question",
+            "type": "string"
+          },
+          {
+            "name": "side_a_label",
+            "type": "string"
+          },
+          {
+            "name": "side_b_label",
+            "type": "string"
+          },
+          {
+            "name": "template",
+            "type": {
+              "defined": {
+                "name": "ResolutionTemplate"
+              }
+            }
+          },
+          {
+            "name": "resolve_ts",
+            "type": "i64"
+          },
+          {
+            "name": "grace_secs",
+            "type": "i64"
+          },
+          {
+            "name": "resolver",
+            "type": "pubkey"
+          },
+          {
+            "name": "crank",
+            "type": "pubkey"
+          },
+          {
+            "name": "fee_bps_holders",
+            "type": "u16"
+          },
+          {
+            "name": "fee_bps_creator",
+            "type": "u16"
+          },
+          {
+            "name": "fee_bps_platform",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Market",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "nonce",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "question",
+            "type": "string"
+          },
+          {
+            "name": "side_a_label",
+            "type": "string"
+          },
+          {
+            "name": "side_b_label",
+            "type": "string"
+          },
+          {
+            "name": "collateral_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "collateral_vault",
+            "type": "pubkey"
+          },
+          {
+            "name": "yes_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "no_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "pair_a_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "pair_b_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "reward_vault_a",
+            "type": "pubkey"
+          },
+          {
+            "name": "reward_vault_b",
+            "type": "pubkey"
+          },
+          {
+            "name": "template",
+            "type": {
+              "defined": {
+                "name": "ResolutionTemplate"
+              }
+            }
+          },
+          {
+            "name": "resolve_ts",
+            "type": "i64"
+          },
+          {
+            "name": "grace_secs",
+            "type": "i64"
+          },
+          {
+            "name": "resolver",
+            "type": "pubkey"
+          },
+          {
+            "name": "crank",
+            "type": "pubkey"
+          },
+          {
+            "name": "fee_bps_holders",
+            "type": "u16"
+          },
+          {
+            "name": "fee_bps_creator",
+            "type": "u16"
+          },
+          {
+            "name": "fee_bps_platform",
+            "type": "u16"
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "MarketStatus"
+              }
+            }
+          },
+          {
+            "name": "pool_a",
+            "type": "pubkey"
+          },
+          {
+            "name": "pool_b",
+            "type": "pubkey"
+          },
+          {
+            "name": "total_minted",
+            "docs": [
+              "Outstanding full sets (minted minus merged). Vault balance == total_minted - total_redeemed."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_redeemed",
+            "docs": [
+              "Winning tokens redeemed for collateral."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "rewards_paid_a",
+            "type": "u64"
+          },
+          {
+            "name": "rewards_paid_b",
+            "type": "u64"
+          },
+          {
+            "name": "epochs",
+            "type": "u32"
+          },
+          {
+            "name": "reserved",
+            "type": {
+              "array": [
+                "u8",
+                64
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketCreated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "nonce",
+            "type": "u64"
+          },
+          {
+            "name": "yes_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "no_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "collateral_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "pair_a_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "pair_b_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "resolve_ts",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketResolved",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "winner",
+            "type": {
+              "defined": {
+                "name": "Side"
+              }
+            }
+          },
+          {
+            "name": "price_a",
+            "docs": [
+              "USD scaled by 1e6."
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "price_b",
+            "docs": [
+              "USD scaled by 1e6 (0 for PriceAbove)."
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "resolved_ts",
+            "type": "i64"
+          },
+          {
+            "name": "manual",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Open"
+          },
+          {
+            "name": "Resolved",
+            "fields": [
+              {
+                "name": "winner",
+                "type": {
+                  "defined": {
+                    "name": "Side"
+                  }
+                }
+              },
+              {
+                "name": "price_a",
+                "type": "i64"
+              },
+              {
+                "name": "price_b",
+                "type": "i64"
+              },
+              {
+                "name": "resolved_ts",
+                "type": "i64"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "PoolsSet",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "pool_a",
+            "type": "pubkey"
+          },
+          {
+            "name": "pool_b",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Redeemed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "side",
+            "type": {
+              "defined": {
+                "name": "Side"
+              }
+            }
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ResolutionTemplate",
+      "docs": [
+        "How the market resolves. Feed ids are 32-byte Pyth price feed ids."
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "CapCompare",
+            "fields": [
+              {
+                "name": "feed_a",
+                "type": {
+                  "array": [
+                    "u8",
+                    32
+                  ]
+                }
+              },
+              {
+                "name": "feed_b",
+                "type": {
+                  "array": [
+                    "u8",
+                    32
+                  ]
+                }
+              },
+              {
+                "name": "shares_a",
+                "type": "u64"
+              },
+              {
+                "name": "shares_b",
+                "type": "u64"
+              }
+            ]
+          },
+          {
+            "name": "RatioOutperform",
+            "fields": [
+              {
+                "name": "feed_a",
+                "type": {
+                  "array": [
+                    "u8",
+                    32
+                  ]
+                }
+              },
+              {
+                "name": "feed_b",
+                "type": {
+                  "array": [
+                    "u8",
+                    32
+                  ]
+                }
+              },
+              {
+                "name": "start_ratio_e9",
+                "type": "u64"
+              }
+            ]
+          },
+          {
+            "name": "PriceAbove",
+            "fields": [
+              {
+                "name": "feed",
+                "type": {
+                  "array": [
+                    "u8",
+                    32
+                  ]
+                }
+              },
+              {
+                "name": "threshold_e6",
+                "type": "u64"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "RewardsDeposited",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "side",
+            "type": {
+              "defined": {
+                "name": "Side"
+              }
+            }
+          },
+          {
+            "name": "depositor",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RewardsPaid",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "side",
+            "type": {
+              "defined": {
+                "name": "Side"
+              }
+            }
+          },
+          {
+            "name": "epoch",
+            "type": "u32"
+          },
+          {
+            "name": "total",
+            "type": "u64"
+          },
+          {
+            "name": "count",
+            "type": "u32"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SetMerged",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SetMinted",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Side",
+      "docs": [
+        "Which side of the duel. `Yes` is side A (the YES mint, `pair_a_mint`,",
+        "`reward_vault_a`); `No` is side B (the NO mint, `pair_b_mint`, `reward_vault_b`)."
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Yes"
+          },
+          {
+            "name": "No"
+          }
+        ]
+      }
+    }
+  ]
+}

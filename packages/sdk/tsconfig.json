@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "noEmit": true,
+    "declaration": true,
+    "isolatedModules": true
+  },
+  "include": ["src", "idl"]
+}

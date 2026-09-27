@@ -1,0 +1,13 @@
+{
+  "cluster": "devnet",
+  "rpcUrl": "https://api.devnet.solana.com",
+  "programId": "AN2TEyFH3zCsv5MENn2uo9LJx69J2EUC8iScAVeDbW25",
+  "operator": "",
+  "createdAt": "2026-09-26T00:00:00.000Z",
+  "updatedAt": "2026-09-26T00:00:00.000Z",
+  "note": "Placeholder so the web app can import it statically. `RPC_URL=https://api.devnet.solana.com pnpm --filter scripts bootstrap` overwrites it once the program is deployed and the operator is funded.",
+  "poolConfig": { "feeBps": 100, "collectFeeMode": 1 },
+  "mints": {},
+  "pairPools": {},
+  "markets": []
+}
