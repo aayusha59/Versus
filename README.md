@@ -48,6 +48,22 @@ Open http://localhost:3000. On localnet and devnet the wallet picker offers a Bu
 
 **Demo mode.** `NEXT_PUBLIC_DEMO=1 pnpm --filter versus-web dev` renders every route from fixtures with ticking odds and no network. Default on a fresh checkout.
 
+## Deploy
+
+Every push deploys through GitHub Actions (`.github/workflows/deploy.yml`) with one shared Vercel token, so any collaborator's commit deploys, not only the Vercel project owner's. `main` goes to production; any other branch gets a preview URL in the run summary.
+
+One-time setup by the Vercel project owner, who also needs admin on this repo:
+
+```sh
+vercel login
+vercel link                                          # at the repo root; writes .vercel/project.json (gitignored)
+gh secret set VERCEL_ORG_ID -R aayusha59/Versus      # paste orgId from .vercel/project.json
+gh secret set VERCEL_PROJECT_ID -R aayusha59/Versus  # paste projectId from .vercel/project.json
+gh secret set VERCEL_TOKEN -R aayusha59/Versus       # paste a token from vercel.com/account/tokens
+```
+
+Then disconnect the Git integration in the Vercel project (Settings, Git, Disconnect) so Vercel stops deploying alongside Actions. Env vars stay in the Vercel project settings; the workflow pulls them at build time.
+
 ## Status
 
 - Program built and tested (39 mocha, 10 unit); IDL committed to `packages/sdk/idl`.
