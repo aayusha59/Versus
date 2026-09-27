@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { TextEffect } from "@/components/motion-primitives/text-effect";
 import { AnimatedGroup } from "@/components/motion-primitives/animated-group";
 import { transitionVariants } from "@/lib/utils";
-import { SolanaMark } from "@/components/SolanaLogo";
+import { SolanaLogo } from "@/components/SolanaLogo";
 
 const groupVariants = {
   container: {
@@ -57,15 +57,10 @@ export default function HeroSection() {
               </Button>
             </AnimatedGroup>
             <AnimatedGroup variants={groupVariants} className="mt-20 flex flex-col items-center gap-5">
-              <p className="font-mono text-sm uppercase tracking-[0.25em] text-muted-foreground">
+              <p className="font-mono text-base uppercase tracking-[0.25em] text-foreground/85">
                 Powered by
               </p>
-              <span className="inline-flex items-center gap-4" aria-label="Solana">
-                <SolanaMark className="h-10 w-auto" />
-                <span className="text-foreground text-4xl font-semibold uppercase tracking-[0.12em] leading-none">
-                  Solana
-                </span>
-              </span>
+              <SolanaLogo className="h-10 w-auto text-foreground" />
             </AnimatedGroup>
           </div>
         </div>
