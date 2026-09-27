@@ -1,6 +1,6 @@
 # Versus
 
-**Bet on Apple. Get paid in Apple.**
+**Back a side. Get paid in what it is made of.**
 
 A duel is a head-to-head question with a date on it: "Will Apple be more valuable than Nvidia on December 31, 2026?" Two sides, YES and NO, each fully backed by USDC. Bet Apple and the fee on your trade is collected in tokenized Apple stock and paid to everyone holding the Apple side. Bet Nvidia, get paid in Nvidia. On the date, Pyth reads both prices, the winner redeems for one USDC a token, and the loser keeps the shares it was paid. One small Anchor program plus Meteora DAMM v2, Pyth, and xStocks.
 

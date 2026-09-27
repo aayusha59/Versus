@@ -6,7 +6,7 @@ import { Rail } from "@/components/Rail";
 
 export const metadata: Metadata = {
   title: { default: "Versus", template: "%s | Versus" },
-  description: "Bet on Apple. Get paid in Apple.",
+  description: "Back a side. Get paid in what it is made of.",
 };
 
 export const viewport: Viewport = {

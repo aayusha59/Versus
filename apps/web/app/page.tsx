@@ -124,7 +124,7 @@ export default function BoardPage() {
     <>
       <Reveal as="header" i={0} className="pt-8 lg:pt-12">
         <div className="flex items-end justify-between gap-6">
-          <h1 className="serif text-xl leading-[1.15] max-w-[24ch] balance-text">Bet on Apple. Get paid in Apple.</h1>
+          <h1 className="serif text-xl leading-[1.15] max-w-[24ch] balance-text">Back a side. Get paid in what it is made of.</h1>
           <div className="hidden sm:block">
             <Clock label={false} />
           </div>
