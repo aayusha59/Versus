@@ -7,7 +7,6 @@ import { InfiniteSlider } from "@/components/ui/infinite-slider";
 import { ProgressiveBlur } from "@/components/ui/progressive-blur";
 import { TextEffect } from "@/components/motion-primitives/text-effect";
 import { AnimatedGroup } from "@/components/motion-primitives/animated-group";
-import DecryptedText from "@/components/DecryptedText";
 import { transitionVariants } from "@/lib/utils";
 import { SolanaMark } from "@/components/SolanaLogo";
 
@@ -22,17 +21,6 @@ export default function HeroSection() {
         <div className="w-full py-24 lg:py-32 lg:grid lg:grid-cols-2 lg:grid-rows-1 grid-cols-1 grid-rows-1">
           <div className="relative mx-auto flex max-w-xl flex-col px-6 lg:block">
             <div className="mx-auto max-w-2xl text-center lg:ml-0 lg:text-left">
-              <div className="mt-8 lg:mt-16">
-                <DecryptedText
-                  text="Prediction duels on Solana - Settled by Pyth"
-                  animateOn="view"
-                  revealDirection="start"
-                  sequential
-                  useOriginalCharsOnly={false}
-                  speed={70}
-                  className="font-mono text-muted-foreground bg-black rounded-md uppercase"
-                />
-              </div>
               <TextEffect
                 preset="fade-in-blur"
                 speedSegment={0.3}
