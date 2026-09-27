@@ -1,0 +1,14 @@
+node_modules/
+.next/
+dist/
+out/
+target/
+.anchor/
+test-ledger/
+.env
+.env.local
+*.log
+.DS_Store
+.pnpm-store/
+.keys/
+*.tsbuildinfo

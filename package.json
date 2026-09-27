@@ -1,0 +1,20 @@
+{
+  "name": "duel",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Paired prediction duels on Solana: bet on Apple vs Nvidia, get paid in the stock you back.",
+  "packageManager": "pnpm@9.11.0",
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "bootstrap:devnet": "pnpm --filter scripts bootstrap",
+    "crank": "pnpm --filter scripts crank",
+    "resolve": "pnpm --filter scripts resolve"
+  },
+  "pnpm": {
+    "overrides": {
+      "@solana/web3.js": "^1.99.0"
+    }
+  }
+}
