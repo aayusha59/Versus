@@ -165,6 +165,7 @@ async function main() {
   }
   dep.rpcUrl = RPC_URL;
   dep.poolConfig = { feeBps, collectFeeMode: 1 };
+  await pruneDeployment(connection, new DuelClient(connection, wallet, { programId }), dep);
 
   /* ------------------------------------------------------------ 1. mock mints */
   console.log("\n== mints");
@@ -195,7 +196,7 @@ async function main() {
     const pairMint = new PublicKey(dep.mints[sym].mint);
     const pool = poolAddressFor(pairMint, usdcMint);
     if (await poolExists(connection, pool)) {
-      if (!dep.pairPools[sym]) {
+      if (dep.pairPools[sym]?.pool !== pool.toBase58()) {
         dep.pairPools[sym] = { symbol: sym, seedPriceUsd: price, ...(await recoverPool(connection, pool, operator.publicKey)) };
         await saveDeployment(dep);
       }
@@ -320,7 +321,7 @@ async function main() {
       const pairUsd = SEED_PRICES[pairSym];
       const pool = poolAddressFor(outcomeMint, pairMint);
       if (await poolExists(connection, pool)) {
-        if (!entry[key]) {
+        if (entry[key]?.pool !== pool.toBase58()) {
           entry[key] = await recoverPool(connection, pool, operator.publicKey);
           await saveDeployment(dep);
         }
@@ -376,6 +377,44 @@ async function tokenBalance(connection: ReturnType<typeof getConnection>, ata: P
   } catch {
     return 0n;
   }
+}
+
+/** Drop mints, pools and markets the deployment file lists but the cluster no longer has (e.g. after `--reset`). */
+async function pruneDeployment(connection: ReturnType<typeof getConnection>, client: DuelClient, dep: Deployment): Promise<void> {
+  const gone = async (address: string) => !(await connection.getAccountInfo(new PublicKey(address)));
+  for (const [sym, m] of Object.entries(dep.mints)) {
+    if (await gone(m.mint)) {
+      console.warn(`  pruning mint ${sym} ${m.mint} (not on chain)`);
+      delete dep.mints[sym];
+    }
+  }
+  for (const [sym, p] of Object.entries(dep.pairPools)) {
+    if (await gone(p.pool)) {
+      console.warn(`  pruning pair pool ${sym} ${p.pool} (not on chain)`);
+      delete dep.pairPools[sym];
+    }
+  }
+  const markets = [];
+  for (const m of dep.markets) {
+    const onChain = await client.fetchMarketIfExists(new PublicKey(m.address));
+    if (!onChain) {
+      console.warn(`  pruning market ${m.nonce} ${m.address} (not on chain)`);
+      continue;
+    }
+    // Market PDAs survive a validator reset but the mints behind them do not; trust the chain.
+    m.collateralMint = onChain.collateralMint.toBase58();
+    m.yesMint = onChain.yesMint.toBase58();
+    m.noMint = onChain.noMint.toBase58();
+    for (const key of ["poolA", "poolB"] as const) {
+      const p = m[key];
+      if (p && (await gone(p.pool))) {
+        m[key] = null;
+        m.poolsSet = false;
+      }
+    }
+    markets.push(m);
+  }
+  dep.markets = markets;
 }
 
 /** Rebuild a DeployedPool entry for a pool that exists on-chain but is missing from the file. */
