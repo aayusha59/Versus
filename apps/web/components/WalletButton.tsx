@@ -29,7 +29,6 @@ interface WalletButtonProps {
   variant?: "primary" | "outline" | "ghost";
   size?: "sm" | "md" | "lg";
   block?: boolean;
-  short?: boolean;
   className?: string;
 }
 
@@ -38,7 +37,7 @@ interface WalletButtonProps {
  * picker lists Phantom, Solflare and Backpack as hairline rows, plus the burner test wallet
  * on localnet/devnet and the demo corner when the app runs on fixtures.
  */
-export function WalletButton({ variant = "outline", size = "md", block, short, className }: WalletButtonProps) {
+export function WalletButton({ variant = "outline", size = "md", block, className }: WalletButtonProps) {
   const { wallets, select, connect, wallet, publicKey, connecting } = useWallet();
   const { owner, source, walletName, demoAvailable, connectDemo, disconnect } = useOwner();
   const [open, setOpen] = useState(false);
@@ -82,13 +81,7 @@ export function WalletButton({ variant = "outline", size = "md", block, short, c
   const burnerAvailable = wallets.some((w) => w.adapter.name === BURNER_WALLET_NAME);
   const burnerBusy = pending === BURNER_WALLET_NAME || (connecting && wallet?.adapter.name === BURNER_WALLET_NAME);
 
-  const label = owner
-    ? source === "demo"
-      ? "Demo wallet"
-      : shortKey(owner)
-    : short
-      ? "Connect Wallet"
-      : "Connect wallet";
+  const label = owner ? (source === "demo" ? "Demo wallet" : shortKey(owner)) : "Connect wallet";
 
   return (
     <Dialog.Root
@@ -100,8 +93,8 @@ export function WalletButton({ variant = "outline", size = "md", block, short, c
     >
       <Dialog.Trigger asChild>
         <Button variant={owner ? "outline" : variant} size={size} block={block} className={className}>
-          {owner ? <span aria-hidden="true" className="inline-block h-1.5 w-1.5 rounded-full bg-side-a" /> : null}
-          <span className={cx(owner && "font-mono text-xs")}>{label}</span>
+          {owner ? <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-side-a" /> : null}
+          <span className={cx(owner && "font-mono")}>{label}</span>
         </Button>
       </Dialog.Trigger>
       <Dialog.Portal>
@@ -111,7 +104,7 @@ export function WalletButton({ variant = "outline", size = "md", block, short, c
             <>
               <div className="flex items-baseline justify-between gap-4">
                 <Dialog.Title className="text-lg font-semibold">Your wallet</Dialog.Title>
-                <Dialog.Close className="btn btn-ghost btn-sm">Close</Dialog.Close>
+                <Dialog.Close className="btn btn-ghost btn-sm -mr-3">Close</Dialog.Close>
               </div>
               <hr className="double mt-4" />
               <dl className="dl mt-4">
@@ -136,7 +129,7 @@ export function WalletButton({ variant = "outline", size = "md", block, short, c
             <>
               <div className="flex items-baseline justify-between gap-4">
                 <Dialog.Title className="text-lg font-semibold">Connect a wallet</Dialog.Title>
-                <Dialog.Close className="btn btn-ghost btn-sm">Close</Dialog.Close>
+                <Dialog.Close className="btn btn-ghost btn-sm -mr-3">Close</Dialog.Close>
               </div>
               <Dialog.Description className="text-sm text-ink-2 mt-1">
                 One signature per bet. Payouts land in the same wallet.

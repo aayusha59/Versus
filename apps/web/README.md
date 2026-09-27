@@ -117,6 +117,17 @@ only the copy changed; its primitives live in `components/ui`, `components/motio
 neutral dark set plus the app's side colours (green for A, red for B), all in `app/globals.css`.
 Fonts are Geist and Geist Mono via `next/font/google`.
 
+## Landing animation pins
+
+The dithered background (`components/Dither.tsx`) is the template's component verbatim, and it
+only behaves with the template's library versions: `three@0.167`, `@react-three/fiber@9.5`,
+`@react-three/postprocessing@3.0.4`, `postprocessing@6.39.5`, `motion@12`. Two things break it:
+a newer three/fiber pair freezes the wave, and two copies of `postprocessing` in `node_modules`
+make the composer's `instanceof Effect` check fail, so the dither pass is skipped and the wave
+renders as smooth smoke. Keep the app's `postprocessing` at the exact version the bindings
+resolve (`readlink node_modules/postprocessing`), and restart `next dev` after changing any of
+them.
+
 ## Wallets
 
 `@solana/wallet-adapter-react` with the Phantom and Solflare adapters; Backpack registers through

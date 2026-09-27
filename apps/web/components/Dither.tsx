@@ -165,7 +165,7 @@ class RetroEffectImpl extends Effect {
 const RetroEffect = forwardRef<RetroEffectImpl, { colorNum: number; pixelSize: number }>((props, ref) => {
     const {colorNum, pixelSize} = props;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const WrappedRetroEffect = wrapEffect(RetroEffectImpl) as unknown as React.ComponentType<any>;
+    const WrappedRetroEffect = wrapEffect(RetroEffectImpl as any) as unknown as React.ComponentType<any>;
     return <WrappedRetroEffect ref={ref} colorNum={colorNum} pixelSize={pixelSize}/>;
 });
 
@@ -235,15 +235,11 @@ function DitheredWaves({
     }, [size, gl]);
 
     const prevColor = useRef([...waveColor]);
-    // Wall-clock time so the waves keep drifting whatever the renderer's own clock does.
-    const startRef = useRef<number | null>(null);
-    useFrame(() => {
+    useFrame(({clock}) => {
         const u = waveUniformsRef.current;
 
         if (!disableAnimation) {
-            const now = performance.now();
-            if (startRef.current === null) startRef.current = now;
-            u.time.value = (now - startRef.current) / 1000;
+            u.time.value = clock.getElapsedTime();
         }
 
         if (u.waveSpeed.value !== waveSpeed) u.waveSpeed.value = waveSpeed;
@@ -325,7 +321,6 @@ export default function Dither({
         <Canvas
             className="w-full h-full relative"
             camera={{position: [0, 0, 6]}}
-            frameloop="always"
             dpr={1}
             gl={{antialias: true, preserveDrawingBuffer: true}}
         >

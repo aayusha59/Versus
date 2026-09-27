@@ -80,9 +80,7 @@ export const HeroHeader = () => {
                   ))}
                 </ul>
               </div>
-              <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
-                <WalletButton variant="primary" size="sm" short />
-              </div>
+              <WalletButton variant="primary" size="sm" className="w-full lg:w-auto" />
             </div>
           </div>
         </div>

@@ -1,138 +1,193 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import * as Select from "@radix-ui/react-select";
-import * as Slider from "@radix-ui/react-slider";
 import type { TemplateKind } from "@/lib/types";
-import { ASSETS, KIND_LABEL, KIND_ORDER, getAsset } from "@/lib/registry";
-import { TEMPLATE_META, buildTemplate, composeQuestion, composeResolves } from "@/lib/compose";
-import { useCreateMarket, useMarkets } from "@/lib/hooks";
+import { ASSETS, KIND_LABEL, KIND_ORDER, getAsset, type Asset } from "@/lib/registry";
+import { buildTemplate, composeQuestion } from "@/lib/compose";
+import { useCreateMarket } from "@/lib/hooks";
 import { useOwner } from "@/lib/owner";
-import { amount, bpsPct, parseUtcInput, usd, utcInputValue, MIDDOT, EN_DASH } from "@/lib/format";
+import { utcShortDate } from "@/lib/format";
+import { cx } from "@/lib/cx";
 import { Reveal } from "@/components/Reveal";
 import { Field, Input } from "@/components/Field";
 import { Button } from "@/components/Button";
-import { Matchup } from "@/components/Matchup";
-import { ToteBoard } from "@/components/ToteBoard";
 import { StatusLine, IDLE, type Status } from "@/components/StatusLine";
 import { WalletButton } from "@/components/WalletButton";
 
-const KINDS: TemplateKind[] = ["CapCompare", "RatioOutperform", "PriceAbove"];
-const FEE_TICKS = [10, 50, 100, 200, 300];
+/**
+ * Create a duel. One column: the question writes itself as you pick, then two names, the kind of
+ * comparison, an end date and a stake, and one button. The fee is fixed at 1% unless changed.
+ *
+ * "Price above" is not offered here: the chain adapter does not route it yet.
+ */
 
-function AssetSelect({
-  id,
-  label,
-  hint,
+type Kind = Exclude<TemplateKind, "PriceAbove">;
+
+const KIND_COPY: Record<Kind, { name: string; explain: string }> = {
+  CapCompare: {
+    name: "Bigger company",
+    explain: "Compares market value, price times shares, on the end date. Prices come from Pyth.",
+  },
+  RatioOutperform: {
+    name: "Better performance",
+    explain: "Compares how far each price moved between today and the end date. Prices come from Pyth.",
+  },
+};
+
+/** Duels end at 21:00 UTC, an hour after the US close. */
+const END_HOUR_UTC = 21;
+const DEFAULT_END = Date.UTC(2026, 11, 31, END_HOUR_UTC, 0);
+const DEFAULT_FEE_BPS = 100;
+const MIN_FEE_BPS = 10;
+const MAX_FEE_BPS = 300;
+const HOUR = 3_600_000;
+
+function dateInputValue(ts: number): string {
+  const d = new Date(ts);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
+}
+
+function parseDateInput(v: string): number | null {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v);
+  if (!m) return null;
+  return Date.UTC(+m[1], +m[2] - 1, +m[3], END_HOUR_UTC, 0);
+}
+
+function SidePicker({
+  side,
   value,
-  onChange,
   exclude,
+  onChange,
 }: {
-  id: string;
-  label: string;
-  hint?: string;
+  side: "a" | "b";
   value: string;
+  exclude: string;
   onChange: (v: string) => void;
-  exclude?: string;
 }) {
   return (
-    <Field id={id} label={label} hint={hint}>
-      <Select.Root value={value} onValueChange={onChange}>
-        <Select.Trigger id={id} className="select-trigger">
-          <Select.Value />
-          <span aria-hidden="true" className="text-ink-2 text-xs">
-            {"▾"}
+    <Select.Root value={value} onValueChange={onChange}>
+      <Select.Trigger className="select-trigger" aria-label={side === "a" ? "First side" : "Second side"}>
+        <span className="flex min-w-0 items-center gap-2.5">
+          <span aria-hidden="true" className={cx("h-2 w-2 flex-none rounded-full", side === "a" ? "bg-side-a" : "bg-side-b")} />
+          <span className="truncate">
+            <Select.Value />
           </span>
-        </Select.Trigger>
-        <Select.Portal>
-          <Select.Content className="select-content" position="popper" sideOffset={4}>
-            <Select.Viewport className="select-viewport">
-              {KIND_ORDER.map((kind) => (
-                <Select.Group key={kind}>
-                  <Select.Label className="select-group-label">{KIND_LABEL[kind]}</Select.Label>
-                  {ASSETS.filter((a) => a.kind === kind).map((a) => (
-                    <Select.Item key={a.symbol} value={a.symbol} className="select-item" disabled={a.symbol === exclude}>
-                      <Select.ItemText>{a.label}</Select.ItemText>
-                      <span className="text-xs text-ink-2 tnum">
-                        {a.symbol} {MIDDOT} pays {a.pairSymbol}
-                      </span>
-                    </Select.Item>
-                  ))}
-                </Select.Group>
-              ))}
-            </Select.Viewport>
-          </Select.Content>
-        </Select.Portal>
-      </Select.Root>
-    </Field>
+        </span>
+        <span aria-hidden="true" className="text-xs text-ink-2">
+          {"▾"}
+        </span>
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Content className="select-content" position="popper" sideOffset={4}>
+          <Select.Viewport className="select-viewport">
+            {KIND_ORDER.map((kind) => (
+              <Select.Group key={kind}>
+                <Select.Label className="select-group-label">{KIND_LABEL[kind]}</Select.Label>
+                {ASSETS.filter((a) => a.kind === kind).map((a) => (
+                  <Select.Item key={a.symbol} value={a.symbol} className="select-item" disabled={a.symbol === exclude}>
+                    <Select.ItemText>{a.label}</Select.ItemText>
+                    <span className="text-xs text-ink-2 tnum">{a.symbol}</span>
+                  </Select.Item>
+                ))}
+              </Select.Group>
+            ))}
+          </Select.Viewport>
+        </Select.Content>
+      </Select.Portal>
+    </Select.Root>
+  );
+}
+
+/** The question as it will read on the card, with each side in its colour. */
+function QuestionLine({ kind, a, b, resolveTs }: { kind: Kind; a: Asset; b: Asset; resolveTs: number | null }) {
+  const when = resolveTs ? utcShortDate(resolveTs) : "the end date";
+  const A = <span className="text-side-a">{a.label}</span>;
+  const B = <span className="text-side-b">{b.label}</span>;
+  return (
+    <p className="display mt-6 text-2xl sm:text-3xl" aria-live="polite">
+      {kind === "CapCompare" ? (
+        <>
+          Will {A} be worth more than {B} on {when}?
+        </>
+      ) : (
+        <>
+          Will {A} outperform {B} from here to {when}?
+        </>
+      )}
+    </p>
   );
 }
 
 export default function NewDuelPage() {
   const router = useRouter();
   const { owner, demoAvailable, connectDemo } = useOwner();
-  const { data: markets } = useMarkets();
   const create = useCreateMarket();
 
-  const [kind, setKind] = useState<TemplateKind>("CapCompare");
+  const [kind, setKind] = useState<Kind>("CapCompare");
   const [aSym, setASym] = useState("AAPL");
   const [bSym, setBSym] = useState("NVDA");
-  const [threshold, setThreshold] = useState("300");
-  const [date, setDate] = useState(utcInputValue(Date.UTC(2026, 11, 31, 21, 0)));
-  const [seed, setSeed] = useState("500");
-  const [fee, setFee] = useState(100);
+  const [date, setDate] = useState(dateInputValue(DEFAULT_END));
+  const [stake, setStake] = useState("500");
+  const [feeText, setFeeText] = useState(String(DEFAULT_FEE_BPS / 100));
+  const [showFee, setShowFee] = useState(false);
   const [status, setStatus] = useState<Status>(IDLE);
 
   const a = getAsset(aSym);
-  const b = kind === "PriceAbove" ? null : getAsset(bSym);
-  const thr = Number.parseFloat(threshold) || 0;
-  const seedN = Number.parseFloat(seed) || 0;
-  const resolveTs = parseUtcInput(date);
-  const meta = TEMPLATE_META[kind];
+  const b = getAsset(bSym);
+  const resolveTs = parseDateInput(date);
+  const stakeN = Number.parseFloat(stake) || 0;
+  const feePct = Number.parseFloat(feeText);
+  const feeBps = Number.isFinite(feePct) ? Math.round(feePct * 100) : NaN;
+  const feeLabel = Number.isFinite(feeBps) ? `${(feeBps / 100).toLocaleString("en-US", { maximumFractionDigits: 2 })}%` : "The fee";
+
+  // "Bigger company" needs share counts on both sides; crypto has none.
+  const capOk = !!(a.shares && b.shares);
+  useEffect(() => {
+    if (!capOk && kind === "CapCompare") setKind("RatioOutperform");
+  }, [capOk, kind]);
+
+  // Picking the other side's name swaps the two, so the same name can never face itself.
+  const pickA = (v: string) => {
+    if (v === bSym) setBSym(aSym);
+    setASym(v);
+  };
+  const pickB = (v: string) => {
+    if (v === aSym) setASym(bSym);
+    setBSym(v);
+  };
 
   const errors = useMemo(() => {
     const e: Record<string, string> = {};
-    if (b && b.symbol === a.symbol) e.b = "A fighter cannot duel itself.";
-    if (kind === "CapCompare" && (!a.shares || (b && !b.shares))) {
-      e.kind = "Cap compare needs share counts. Pick two stocks, or switch to Outperform.";
-    }
-    if (kind === "PriceAbove" && !(thr > 0)) e.threshold = "Set a line above zero.";
-    if (!resolveTs) e.date = "Enter a date and time.";
-    else if (resolveTs < Date.now() + 3_600_000) e.date = "The bell must be at least an hour out.";
-    if (!(seedN >= 10)) e.seed = "Seed at least 10 USDC.";
+    if (!resolveTs) e.date = "Pick a date.";
+    else if (resolveTs < Date.now() + HOUR) e.date = "Pick a later date.";
+    if (!(stakeN >= 10)) e.stake = "At least 10 USDC.";
+    if (!(feeBps >= MIN_FEE_BPS && feeBps <= MAX_FEE_BPS)) e.fee = "Between 0.1% and 3%.";
     return e;
-  }, [a, b, kind, thr, resolveTs, seedN]);
+  }, [resolveTs, stakeN, feeBps]);
 
-  const valid = Object.keys(errors).length === 0;
-  const question = composeQuestion(kind, a, b, resolveTs ?? Date.now(), thr);
-  const no = (markets?.length ?? 0) + 1;
-  const headline =
-    kind === "PriceAbove"
-      ? { a: a.label, b: usd(thr), joiner: "above" }
-      : { a: a.label, b: b?.label ?? "?", joiner: "vs" };
+  const valid = Object.keys(errors).length === 0 && a.symbol !== b.symbol;
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!owner || !valid || !resolveTs) return;
-    setStatus({
-      state: "pending",
-      text: `Opening ${headline.a} ${headline.joiner} ${headline.b}. Minting the set and seeding both pools.`,
-    });
+    setStatus({ state: "pending", text: "Creating the duel." });
     try {
       const r = await create.mutateAsync({
-        template: buildTemplate(kind, a, b, thr),
-        question,
+        template: buildTemplate(kind, a, b, 0),
+        question: composeQuestion(kind, a, b, resolveTs, 0),
         a: { symbol: a.symbol, label: a.label },
-        b: b ? { symbol: b.symbol, label: b.label } : null,
+        b: { symbol: b.symbol, label: b.label },
         resolveTs,
-        seedUsdc: seedN,
-        feeBps: fee,
+        seedUsdc: stakeN,
+        feeBps,
         creator: owner,
         onProgress: (text) => setStatus({ state: "pending", text }),
       });
-      setStatus({ state: "ok", text: "Opened. Taking you to the card.", sig: r.signature });
+      setStatus({ state: "ok", text: "Created. Opening it now.", sig: r.signature });
       setTimeout(() => router.push(`/d/${r.id}`), 500);
     } catch (err) {
       setStatus({ state: "error", text: err instanceof Error ? err.message : "The chain did not answer." });
@@ -140,190 +195,113 @@ export default function NewDuelPage() {
   };
 
   return (
-    <div className="lg:grid lg:grid-cols-12 lg:gap-x-8">
-      <Reveal as="header" i={0} className="lg:col-span-12">
+    <Reveal className="mx-auto max-w-lg">
+      <header>
         <p className="font-mono text-sm uppercase text-muted-foreground">Create</p>
-        <h1 className="mt-2 text-4xl font-semibold lg:text-5xl">Make a duel</h1>
-        <p className="mt-4 text-lg text-muted-foreground max-w-[44ch] text-pretty">
-          Pick a template and two fighters. You seed both pools; the duel is live the moment it lands.
-        </p>
-      </Reveal>
+        <h1 className="mt-2 text-4xl font-semibold lg:text-5xl">New duel</h1>
+        <QuestionLine kind={kind} a={a} b={b} resolveTs={resolveTs} />
+      </header>
 
-      <form onSubmit={submit} className="lg:col-span-7 mt-10 flex flex-col gap-12" noValidate>
-        <Reveal as="fieldset" i={1} className="flex flex-col gap-4">
-          <legend className="label mb-4">Template</legend>
+      <form onSubmit={submit} className="mt-10 flex flex-col gap-8" noValidate>
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+          <SidePicker side="a" value={aSym} exclude={bSym} onChange={pickA} />
+          <span className="text-sm text-fg-3" aria-hidden="true">
+            vs
+          </span>
+          <SidePicker side="b" value={bSym} exclude={aSym} onChange={pickB} />
+        </div>
+
+        <div className="flex flex-col gap-3">
           <ToggleGroup.Root
             type="single"
             value={kind}
             onValueChange={(v) => {
-              if (v) setKind(v as TemplateKind);
+              if (v) setKind(v as Kind);
             }}
-            className="templates"
-            aria-label="Template"
+            className="pills"
+            aria-label="What decides the winner"
           >
-            {KINDS.map((k) => (
-              <ToggleGroup.Item key={k} value={k} className="template">
-                <span className="label">{TEMPLATE_META[k].name}</span>
-                <span className="block font-semibold mt-1">{TEMPLATE_META[k].short}</span>
-                <span className="block template-explainer">{TEMPLATE_META[k].explainer}</span>
+            {(Object.keys(KIND_COPY) as Kind[]).map((k) => (
+              <ToggleGroup.Item
+                key={k}
+                value={k}
+                className="pill focus-visible:border-ring disabled:cursor-not-allowed disabled:opacity-40"
+                disabled={k === "CapCompare" && !capOk}
+              >
+                {KIND_COPY[k].name}
               </ToggleGroup.Item>
             ))}
           </ToggleGroup.Root>
-          {errors.kind ? (
-            <p className="field-error" role="alert">
-              {errors.kind}
-            </p>
-          ) : null}
-        </Reveal>
-
-        <Reveal as="fieldset" i={2} className="rule-ink pt-6">
-          <legend className="sr-only">Corners</legend>
-          <div className="grid gap-8 sm:grid-cols-2">
-            <AssetSelect id="corner-a" label="Left corner" hint="prints green" value={aSym} onChange={setASym} />
-            {meta.needsB ? (
-              <div className="flex flex-col gap-1.5">
-                <AssetSelect
-                  id="corner-b"
-                  label="Right corner"
-                  hint="prints red"
-                  value={bSym}
-                  onChange={setBSym}
-                  exclude={aSym}
-                />
-                {errors.b ? (
-                  <p className="field-error" role="alert">
-                    {errors.b}
-                  </p>
-                ) : null}
-              </div>
-            ) : (
-              <Field id="line" label="The line" hint="USD" error={errors.threshold}>
-                <Input
-                  id="line"
-                  inputMode="decimal"
-                  value={threshold}
-                  onChange={(e) => setThreshold(e.target.value.replace(/[^0-9.]/g, ""))}
-                  invalid={!!errors.threshold}
-                  className="tnum"
-                />
-              </Field>
-            )}
-          </div>
-          <p className="text-sm text-muted-foreground mt-5 max-w-[48ch]">
-            {kind === "PriceAbove"
-              ? `${a.label} holders are paid in ${a.pairSymbol}. The under side is paid in USDC.`
-              : `${a.label} holders are paid in ${a.pairSymbol}; ${b?.label} holders in ${b?.pairSymbol}. Bet on one, earn it.`}
+          <p className="text-sm text-muted-foreground max-w-[52ch]">
+            {KIND_COPY[kind].explain}
+            {!capOk ? " Bigger company needs two stocks." : ""}
           </p>
-        </Reveal>
+        </div>
 
-        <Reveal as="fieldset" i={3} className="rule-ink pt-6 grid gap-8 sm:grid-cols-2">
-          <legend className="sr-only">The bell</legend>
-          <Field id="bell" label="Resolves at" hint="UTC" error={errors.date}>
+        <div className="grid gap-6 sm:grid-cols-2">
+          <Field id="end" label="Ends" hint="21:00 UTC" error={errors.date}>
             <Input
-              id="bell"
-              type="datetime-local"
+              id="end"
+              type="date"
               value={date}
+              min={dateInputValue(Date.now() + HOUR)}
               onChange={(e) => setDate(e.target.value)}
               invalid={!!errors.date}
               className="tnum"
             />
           </Field>
-          <Field id="seed" label="Seed" hint="USDC, mints the first set" error={errors.seed}>
+          <Field id="stake" label="Your stake" hint="USDC" error={errors.stake}>
             <Input
-              id="seed"
+              id="stake"
               inputMode="decimal"
-              value={seed}
-              onChange={(e) => setSeed(e.target.value.replace(/[^0-9.]/g, ""))}
-              invalid={!!errors.seed}
+              value={stake}
+              onChange={(e) => setStake(e.target.value.replace(/[^0-9.]/g, ""))}
+              invalid={!!errors.stake}
               className="tnum"
             />
           </Field>
-        </Reveal>
+        </div>
 
-        <Reveal as="fieldset" i={4} className="rule-ink pt-6">
-          <legend className="sr-only">Fee</legend>
-          <div className="flex items-baseline justify-between gap-4">
-            <span className="label">Fee to holders</span>
-            <span className="text-sm tnum">
-              {fee} bps {MIDDOT} {bpsPct(fee)} of every trade
-            </span>
-          </div>
-          <div className="mt-3">
-            <Slider.Root
-              className="rail-root"
-              min={10}
-              max={300}
-              step={10}
-              value={[fee]}
-              onValueChange={([v]) => setFee(v)}
-              aria-label="Fee in basis points"
-            >
-              <Slider.Track className="rail-track">
-                <Slider.Range className="rail-range" />
-              </Slider.Track>
-              <Slider.Thumb className="rail-thumb" aria-valuetext={`${fee} basis points`} />
-            </Slider.Root>
-            <div className="rail-ticks" aria-hidden="true">
-              {FEE_TICKS.map((t) => (
-                <span key={t} className="rail-tick tnum" style={{ left: `${((t - 10) / 290) * 100}%` }}>
-                  {t}
-                </span>
-              ))}
-            </div>
-          </div>
-          <p className="text-sm text-muted-foreground mt-4 max-w-[48ch]">
-            Collected in the pair token only, so a bet on {a.label} pays {a.label} holders in {a.pairSymbol}.
-          </p>
-        </Reveal>
-
-        <Reveal i={5} className="rule-ink pt-6 flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
           {owner ? (
             <>
-              <Button type="submit" variant="primary" size="lg" disabled={!valid || create.isPending}>
-                Open the duel {EN_DASH} seed {amount(seedN, 0)} USDC
+              <Button type="submit" variant="primary" size="lg" block disabled={!valid || create.isPending}>
+                Create duel
               </Button>
               <StatusLine status={status} />
             </>
           ) : (
             <>
-              <p className="text-sm text-muted-foreground">Connect a wallet to open the duel. The preview is live either way.</p>
-              <div className="flex flex-wrap items-center gap-3">
-                <WalletButton variant="primary" />
-                {demoAvailable ? (
-                  <Button variant="ghost" onClick={connectDemo}>
-                    Use the demo wallet
-                  </Button>
-                ) : null}
-              </div>
+              <WalletButton variant="primary" size="lg" block />
+              {demoAvailable ? (
+                <Button variant="ghost" onClick={connectDemo}>
+                  Use the demo wallet
+                </Button>
+              ) : null}
             </>
           )}
-        </Reveal>
-      </form>
 
-      <Reveal i={2} className="lg:col-span-5 mt-14 lg:mt-8 lg:sticky lg:top-24 self-start card card-pad" aria-live="polite">
-        <div className="flex items-center gap-2 label">
-          <span>Preview</span>
-          <span aria-hidden="true">{MIDDOT}</span>
-          <span className="tnum">No. {String(no).padStart(2, "0")}</span>
-          <span aria-hidden="true">{MIDDOT}</span>
-          <span>{meta.name}</span>
+          {showFee ? (
+            <Field id="fee" label="Fee to holders" hint="% of each trade" error={errors.fee} className="mt-2 w-64">
+              <Input
+                id="fee"
+                inputMode="decimal"
+                value={feeText}
+                onChange={(e) => setFeeText(e.target.value.replace(/[^0-9.]/g, ""))}
+                invalid={!!errors.fee}
+                className="tnum"
+              />
+            </Field>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Your stake seeds both sides equally. {feeLabel} of every trade goes to holders of that side.{" "}
+              <button type="button" className="link text-fg-2 hover:text-fg" onClick={() => setShowFee(true)}>
+                Change
+              </button>
+            </p>
+          )}
         </div>
-        <Matchup {...headline} size="2xl" as="p" className="mt-3" />
-        <p className="text-lg mt-4 max-w-[30ch] text-balance">{question}</p>
-        <p className="text-sm text-muted-foreground mt-3 max-w-[48ch]">
-          {resolveTs
-            ? composeResolves(buildTemplate(kind === "CapCompare" && errors.kind ? "RatioOutperform" : kind, a, b, thr), a.feedName, b?.feedName ?? null, resolveTs)
-            : "Set the bell to see the resolution line."}
-        </p>
-        <div className="mt-8">
-          <ToteBoard
-            aLabel={a.label}
-            bLabel={kind === "PriceAbove" ? "Under" : (b?.label ?? "?")}
-            odds={{ a: 0.5, b: 0.5, impliedSum: 1 }}
-            subline={`Opens dead even at 50${EN_DASH}50.`}
-          />
-        </div>
-      </Reveal>
-    </div>
+      </form>
+    </Reveal>
   );
 }

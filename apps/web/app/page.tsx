@@ -17,7 +17,7 @@ export default function Home() {
           pixelSize={2}
           waveAmplitude={0.3}
           waveFrequency={3}
-          waveSpeed={0.12}
+          waveSpeed={0.05}
         />
       </div>
       <HeroSection />
