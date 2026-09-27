@@ -22,7 +22,7 @@ export const BURNER_STORAGE_KEY = "versus:burner-wallet-secret-key";
 const ICON =
   "data:image/svg+xml;utf8," +
   encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" fill="none" stroke="#2b2620" stroke-width="2"/><rect x="8" y="8" width="8" height="8" fill="#c9401f"/></svg>',
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" fill="none" stroke="#8a8a8a" stroke-width="2"/><rect x="8" y="8" width="8" height="8" fill="#e5e5e5"/></svg>',
   );
 
 function loadOrCreateKeypair(): Keypair {
