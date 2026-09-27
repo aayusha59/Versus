@@ -52,20 +52,21 @@ Open http://localhost:3000. On localnet and devnet the wallet picker offers a Bu
 
 - Program built and tested (39 mocha, 10 unit); IDL committed to `packages/sdk/idl`.
 - SDK and scripts verified end to end on localnet (Agave 3.0.13, Sept 26, 2026).
-- Web app complete; chain adapter and Burner wallet landing now.
-- Devnet deployment pending; devnet airdrops were rate-limited. Fund `GtQ8ZPUWHkbU4s2oRGNPmLh8ZX2wEfovCvHAp1d4Bigj` with about 3 SOL, then:
+- Web app complete, with a chain adapter and Burner wallet.
+- Deployed on devnet: the program, three duels, six outcome pools, and test markets.
+  `packages/sdk/deployments/devnet.json` lists them. A Bitcoin vs Ethereum test market has been
+  settled through Pyth on devnet, and another is left open for the demo:
 
 ```sh
-wsl -d Ubuntu -- bash -lc 'cd ~/duel && anchor deploy --provider.cluster devnet'
-RPC_URL=https://api.devnet.solana.com pnpm --filter scripts bootstrap
+RPC_URL=https://api.devnet.solana.com pnpm --filter scripts resolve -- --market 5AhqSroPQ2uZ7fB23huAzeFPfpeB22Hok8odV1DF9hE5
 ```
 
 ## Known limits
 
-- The operator wallet owns the Meteora LP positions and claims their fees.
+- The operator wallet owns the Meteora LP positions and claims their fees; duels created in the web app hand their positions to it.
 - Rewards accounting is off-chain; the payout is on-chain through `distribute`, which checks the crank key and the vault balance.
 - `resolve_manual` by the resolver after `resolve_ts + grace_secs` is the fallback for stale feeds.
-- Hermes now requires an API key, so `resolve --manual` is the demo path; plain `resolve` needs `PYTH_API_KEY`.
+- Hermes now requires an API key (`PYTH_API_KEY`), and the key must be entitled to each feed. Crypto feeds settle through plain `resolve`; US equity feeds need a plan that includes them, otherwise `resolve --manual`.
 - xStocks are mocked on devnet and localnet; the registry maps each mock to its mainnet mint.
 - Share counts for `CapCompare` are placeholders set at creation.
 
@@ -77,6 +78,10 @@ Upgrade path for each: `docs/ARCHITECTURE.md` §8.
 - [`docs/PITCH.md`](docs/PITCH.md): pitch and demo scripts, judge Q&A
 - [`docs/SUBMISSION.md`](docs/SUBMISSION.md): targets, judging criteria, checklist
 - [`docs/PRIOR_ART.md`](docs/PRIOR_ART.md): differentiation, market context
+
+## License
+
+MIT. See [`LICENSE`](LICENSE).
 
 ## Disclaimer
 

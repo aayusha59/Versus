@@ -18,6 +18,10 @@ const ITEMS: { q: string; a: string }[] = [
     a: "Yes. Sell back into the pool any time in one transaction. You keep every stock payout you already received.",
   },
   {
+    q: "What are the risks?",
+    a: "Not offered in the United States or other restricted jurisdictions. The losing side goes to zero. Stock payouts are other traders' fees, not yield. xStocks can be paused or seized by their issuer, though USDC redemption is unaffected. Not legal or investment advice.",
+  },
+  {
     q: "Which wallets work?",
     a: "Phantom, Solflare and Backpack. On devnet and localnet the picker also offers a Burner test wallet, and the faucet mints mock USDC so you can try a full round trip.",
   },

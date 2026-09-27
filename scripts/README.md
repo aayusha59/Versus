@@ -30,12 +30,14 @@ mints a set of 5,000 per market, creates the YES/pairA and NO/pairB pools at 50/
 first, so re-running continues where it stopped. Market PDAs use nonces 1..3 per operator.
 
 ```
-pnpm --filter scripts bootstrap -- [--fee-bps 100] [--seed-usd 250000] [--skip-markets] [--with-test-market]
+pnpm --filter scripts bootstrap -- [--fee-bps 100] [--seed-usd 250000] [--skip-markets] [--with-test-market [--test-nonce 99] [--test-pair aapl-nvda|btc-eth]]
 ```
 
 - `--skip-markets` stages mints and pair/USDC pools before the program is deployed (devnet staging).
-- `--with-test-market` adds a fourth market (nonce 99) whose `resolve_ts + grace` is already in the
-  past so `resolve --manual` and `redeem` can be exercised.
+- `--with-test-market` adds a test market whose `resolve_ts + grace` is already in the past so
+  `resolve` and `redeem` can be exercised. `--test-nonce` picks a fresh one once the last is
+  resolved (default 99). `--test-pair btc-eth` uses the 24/7 crypto feeds, so plain `resolve`
+  settles it through Pyth at any hour; `aapl-nvda` (default) needs equity-feed access or `--manual`.
 
 ### `bet`
 
@@ -69,6 +71,10 @@ them into the market's reward vault, snapshot outcome-token holders, `distribute
 chunks of 12, print a ledger line per epoch. The pool vault, the market and (by default) the
 operator are excluded from the snapshot.
 
+Each loop cranks every on-chain market whose `crank` is this key, not only the deployment file's:
+duels created in the web app name the platform key as crank and resolver and hand it both LP
+position NFTs in their last transaction. `--market` accepts an address or a label.
+
 ```
 pnpm --filter scripts crank -- --once
 pnpm --filter scripts crank -- --interval 300 [--market "Apple"] [--min-usd 0.01] [--include-operator] [--dry-run]
@@ -88,6 +94,17 @@ pnpm --filter scripts resolve -- --market <pk|label> --manual --winner yes --pri
 
 ```
 pnpm --filter scripts faucet -- <wallet> [amount=1000] [--mint AAPL]
+```
+
+### `faucet:setup`
+
+Creates `.keys/faucet-<cluster>.json` and tops it up from the operator to `--sol` SOL and `--usdc`
+mock USDC (transfers; it gets no mint authority). The web app's `/api/faucet` refuses the operator
+key on devnet, so point it at this one: `FAUCET_KEYPAIR_PATH` locally, or the file's JSON array in
+`FAUCET_KEYPAIR` on the host. Re-run to refill.
+
+```
+pnpm --filter scripts faucet:setup -- [--sol 1] [--usdc 100000] [--out .keys/faucet-devnet.json]
 ```
 
 ### `validator`

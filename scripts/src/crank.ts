@@ -1,5 +1,7 @@
 /**
- * Rewards crank. For every market and side:
+ * Rewards crank. Every loop it lists the on-chain markets whose `crank` is this key (bootstrap
+ * markets and web-created ones, whose LP position NFTs the creator hands to this key), and for
+ * every market and side:
  *   1. claim the operator's LP position fees on the outcome/pair pool (fees are quote-only, so
  *      they arrive as pair tokens: AAPLx for the YES side of Apple vs Nvidia),
  *   2. deposit_rewards into the side's reward vault,
@@ -22,11 +24,14 @@ import {
   getCpAmm,
   getMintInfo,
   getPoolState,
+  listPositions,
   loadDeployment,
   pairUsdFromPool,
   snapshotHolders,
+  templateToJson,
   unclaimedFees,
   type DeployedMarket,
+  type DeployedPool,
   type Deployment,
   type Market,
   type Side,
@@ -48,9 +53,9 @@ async function main() {
   const client = DuelClient.fromDeployment(connection, dep, walletFor(operator));
   console.log(`crank cluster=${CLUSTER} rpc=${RPC_URL} operator=${operator.publicKey.toBase58()} ${once ? "(once)" : `every ${interval}s`}${dryRun ? " DRY RUN" : ""}`);
 
-  const targets = only ? [findMarket(dep, only) ?? dieMarket(only)] : dep.markets;
-
   for (;;) {
+    const all = await crankTargets(connection, client, dep, operator.publicKey);
+    const targets = only ? [findMarket({ ...dep, markets: all }, only) ?? dieMarket(only)] : all;
     for (const entry of targets) {
       try {
         await crankMarket({ connection, client, dep, entry, operator, minUsd, dryRun, includeOperator });
@@ -64,7 +69,68 @@ async function main() {
 }
 
 function dieMarket(key: string): never {
-  throw new Error(`market "${key}" not found in deployment`);
+  throw new Error(`market "${key}" not found among the markets this key cranks`);
+}
+
+/**
+ * Every on-chain market whose `crank` is this key: the deployment's entries as written, plus
+ * markets created elsewhere (the web app), whose LP positions the creator handed to this key.
+ */
+async function crankTargets(
+  connection: ReturnType<typeof getConnection>,
+  client: DuelClient,
+  dep: Deployment,
+  crank: PublicKey,
+): Promise<DeployedMarket[]> {
+  const markets = (await client.fetchAllMarkets()).filter((m) => m.crank.equals(crank));
+  const symbolByMint = new Map(Object.values(dep.mints).map((m) => [m.mint, m.symbol]));
+  const positions = await listPositions(connection, crank);
+  const out: DeployedMarket[] = [];
+  for (const m of markets) {
+    const address = m.address.toBase58();
+    const known = dep.markets.find((x) => x.address === address);
+    if (known) {
+      out.push(known);
+      continue;
+    }
+    if (m.poolA.equals(PublicKey.default) || m.poolB.equals(PublicKey.default)) continue;
+    const pool = async (address: PublicKey): Promise<DeployedPool | null> => {
+      const pos = positions.find((p) => p.pool.equals(address));
+      if (!pos) return null;
+      const s = await getPoolState(connection, address);
+      return {
+        pool: address.toBase58(),
+        position: pos.position.toBase58(),
+        positionNft: pos.positionNft.toBase58(),
+        positionNftAccount: pos.positionNftAccount.toBase58(),
+        tokenAMint: s.tokenAMint.toBase58(),
+        tokenBMint: s.tokenBMint.toBase58(),
+        tokenAVault: s.tokenAVault.toBase58(),
+        tokenBVault: s.tokenBVault.toBase58(),
+      };
+    };
+    const symbol = (mint: PublicKey) => symbolByMint.get(mint.toBase58()) ?? mint.toBase58().slice(0, 4);
+    out.push({
+      address,
+      nonce: m.nonce.toString(),
+      creator: m.creator.toBase58(),
+      question: m.question,
+      sideALabel: m.sideALabel,
+      sideBLabel: m.sideBLabel,
+      pairA: symbol(m.pairAMint),
+      pairB: symbol(m.pairBMint),
+      collateralMint: m.collateralMint.toBase58(),
+      yesMint: m.yesMint.toBase58(),
+      noMint: m.noMint.toBase58(),
+      poolA: await pool(m.poolA),
+      poolB: await pool(m.poolB),
+      poolsSet: true,
+      template: templateToJson(m.template),
+      resolveTs: m.resolveTs,
+      graceSecs: m.graceSecs,
+    });
+  }
+  return out;
 }
 
 interface Ctx {
@@ -93,7 +159,7 @@ async function crankSide(ctx: Ctx, market: Market, side: Side) {
   const poolEntry = side === "yes" ? entry.poolA : entry.poolB;
   const pairSym = side === "yes" ? entry.pairA : entry.pairB;
   if (!poolEntry) {
-    console.log(`  ${side.toUpperCase()}: no pool recorded, skipping`);
+    console.log(`  ${side.toUpperCase()}: this key holds no LP position in the pool, skipping`);
     return;
   }
   const pool = new PublicKey(poolEntry.pool);

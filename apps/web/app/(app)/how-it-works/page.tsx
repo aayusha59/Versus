@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { OddsBar } from "@/components/OddsBar";
+import { Risks } from "@/components/Risks";
 import { SolanaLogo, SolanaMark } from "@/components/SolanaLogo";
 import { BetRoute, CrankPipeline, MintSet, ResolveFlow, SystemMap } from "@/components/HowDiagrams";
 
@@ -205,6 +206,11 @@ export default function HowItWorksPage() {
           On devnet, USDC, AAPLx and NVDAx are mock mints. The registry maps each to its mainnet xStocks mint and the
           program runs unchanged.
         </p>
+      </section>
+
+      <section id="risks" className="mt-14 scroll-mt-24">
+        <h2 className="text-lg font-medium">Risks</h2>
+        <Risks className="mt-6 text-left" />
       </section>
 
       <div className="mt-14 rounded-3xl border px-6 py-10">

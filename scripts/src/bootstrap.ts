@@ -23,12 +23,12 @@ import {
   poolAddressFor,
   poolExists,
   saveDeployment,
+  templateToJson,
   type DeployedPool,
   type Deployment,
   type Template,
-  type TemplateJson,
 } from "@versus/sdk";
-import { CLUSTER, PROGRAM_ID_OVERRIDE, RPC_URL, ensureSol, explorerTx, flagNumber, fmt, getConnection, loadKeypair, parseArgs, walletFor } from "./env.js";
+import { CLUSTER, PROGRAM_ID_OVERRIDE, RPC_URL, ensureSol, explorerTx, flagNumber, flagString, fmt, getConnection, loadKeypair, parseArgs, walletFor } from "./env.js";
 
 const DECIMALS = 6;
 const SUPPLY = 10_000_000n * 10n ** BigInt(DECIMALS); // 10M of each mock token to the operator
@@ -114,16 +114,12 @@ const MARKETS: MarketDef[] = [
   },
 ];
 
-function templateJson(t: Template): TemplateJson {
-  switch (t.kind) {
-    case "capCompare":
-      return { kind: t.kind, feedA: t.feedA, feedB: t.feedB, sharesA: t.sharesA.toString(), sharesB: t.sharesB.toString() };
-    case "ratioOutperform":
-      return { kind: t.kind, feedA: t.feedA, feedB: t.feedB, startRatioE9: t.startRatioE9.toString() };
-    case "priceAbove":
-      return { kind: t.kind, feed: t.feed, thresholdE6: t.thresholdE6.toString() };
-  }
-}
+/** Test markets (`--with-test-market`): resolve_ts two grace periods ago, so both resolve paths are open. */
+const TEST_MARKETS: Record<string, { base: MarketDef; question: string }> = {
+  "aapl-nvda": { base: MARKETS[0], question: "(test) Was Apple worth more than Nvidia yesterday?" },
+  // Crypto feeds tick 24/7, so this one can settle through Pyth (`resolve` without --manual) at any hour.
+  "btc-eth": { base: MARKETS[1], question: "(test) Did Bitcoin outperform Ethereum?" },
+};
 
 async function main() {
   const args = parseArgs();
@@ -131,9 +127,14 @@ async function main() {
   const seedUsd = flagNumber(args, "seed-usd", 250_000); // USDC per pair pool side
   // --skip-markets stages mints + pair/USDC pools before the program is deployed; re-run without it later.
   const skipMarkets = args.flags["skip-markets"] === true;
-  // --with-test-market adds a 4th market whose resolve_ts + grace is already in the past, so
-  // `resolve --manual` and `redeem` can be exercised (acceptance criterion 4).
+  // --with-test-market adds a market whose resolve_ts + grace is already in the past, so `resolve`
+  // and `redeem` can be exercised (acceptance criterion 4). --test-nonce picks a fresh one once
+  // the last is spent; --test-pair aapl-nvda (default, manual resolve) or btc-eth (Pyth resolve).
   const withTestMarket = args.flags["with-test-market"] === true;
+  const testNonce = flagNumber(args, "test-nonce", 99);
+  const testPair = flagString(args, "test-pair") ?? "aapl-nvda";
+  const test = TEST_MARKETS[testPair];
+  if (withTestMarket && !test) throw new Error(`--test-pair must be one of ${Object.keys(TEST_MARKETS).join(", ")}`);
 
   const connection = getConnection();
   const operator = loadKeypair();
@@ -242,17 +243,7 @@ async function main() {
   console.log("\n== markets");
   const client = new DuelClient(connection, wallet, { programId });
   const defs = withTestMarket
-    ? [
-        ...MARKETS,
-        {
-          ...MARKETS[0],
-          nonce: 99,
-          question: "(test) Was Apple worth more than Nvidia yesterday?",
-          sideALabel: "Apple",
-          sideBLabel: "Nvidia",
-          resolveTs: Math.floor(Date.now() / 1000) - 2 * GRACE,
-        },
-      ]
+    ? [...MARKETS, { ...test.base, nonce: testNonce, question: test.question, resolveTs: Math.floor(Date.now() / 1000) - 2 * GRACE }]
     : MARKETS;
   for (const def of defs) {
     const resolveTs = def.resolveTs ?? RESOLVE_TS;
@@ -296,7 +287,7 @@ async function main() {
         poolA: null,
         poolB: null,
         poolsSet: false,
-        template: templateJson(def.template),
+        template: templateToJson(def.template),
         resolveTs,
         graceSecs: GRACE,
       };

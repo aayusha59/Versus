@@ -9,6 +9,7 @@
     "crank": "tsx src/crank.ts",
     "resolve": "tsx src/resolve.ts",
     "faucet": "tsx src/faucet.ts",
+    "faucet:setup": "tsx src/faucet-setup.ts",
     "validator": "tsx src/validator.ts",
     "smoke": "tsx src/smoke.ts",
     "bet": "tsx src/bet.ts"

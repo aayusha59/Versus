@@ -294,7 +294,9 @@ export default function NewDuelPage() {
             </Field>
           ) : (
             <p className="text-sm text-muted-foreground">
-              Your stake seeds both sides equally. {feeLabel} of every trade goes to holders of that side.{" "}
+              Your stake seeds both sides equally and stays in the pools as their starting liquidity; the
+              platform holds the pool positions so it can pay out their fees. {feeLabel} of every trade goes to
+              holders of that side.{" "}
               <button type="button" className="link text-fg-2 hover:text-fg" onClick={() => setShowFee(true)}>
                 Change
               </button>

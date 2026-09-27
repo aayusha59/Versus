@@ -4,7 +4,7 @@
   "programId": "AN2TEyFH3zCsv5MENn2uo9LJx69J2EUC8iScAVeDbW25",
   "operator": "GtQ8ZPUWHkbU4s2oRGNPmLh8ZX2wEfovCvHAp1d4Bigj",
   "createdAt": "2026-09-26T00:00:00.000Z",
-  "updatedAt": "2026-09-27T04:36:14.729Z",
+  "updatedAt": "2026-09-27T12:04:32.673Z",
   "note": "Placeholder so the web app can import it statically. `RPC_URL=https://api.devnet.solana.com pnpm --filter scripts bootstrap` overwrites it once the program is deployed and the operator is funded.",
   "poolConfig": {
     "feeBps": 100,
@@ -291,6 +291,90 @@
         "sharesB": "24400000000"
       },
       "resolveTs": 1790310965,
+      "graceSecs": 86400
+    },
+    {
+      "address": "8ExyCpg2pCXUyAMotqQKrsqcR8t9fBQ9aE5PUDVSJuQQ",
+      "nonce": "100",
+      "creator": "GtQ8ZPUWHkbU4s2oRGNPmLh8ZX2wEfovCvHAp1d4Bigj",
+      "question": "(test) Did Bitcoin outperform Ethereum?",
+      "sideALabel": "Bitcoin",
+      "sideBLabel": "Ethereum",
+      "pairA": "BTC",
+      "pairB": "ETH",
+      "collateralMint": "34HSEx1LsWo5SURHsVTwCdTqYTnYypoedFFLzPbam9ez",
+      "yesMint": "3L5EQCW4faiYDFkpoGtQruPpc3542B5maeW3bZtbzstn",
+      "noMint": "JBHWNZWBcKGiWd6dJsZ3dh9d9iWbzoRGfg5eunGwxoUJ",
+      "poolA": {
+        "pool": "9nzdT3TC6hPNLzV16m8ob8qfu5amLPB13JVAaFsK2Rpa",
+        "position": "iqSWUDngFkG8soFR1zm8miyrGpmFT25huZevqU1rZBN",
+        "positionNft": "4bN4eULgwqbwXqB8gPirLJZ3MP2cZAxaPj29y2CKkBjE",
+        "positionNftAccount": "EecG2QrzTmJEYwk31juwGnVANNgfykmZxmx3vGyqaZuD",
+        "tokenAMint": "3L5EQCW4faiYDFkpoGtQruPpc3542B5maeW3bZtbzstn",
+        "tokenBMint": "6JVAvAZjxJbZNaf46qRfmdACLZZSsDf3o9VYDppyYD3s",
+        "tokenAVault": "Gm4CAwmZh19EWREzfBRSyKGBwciu7aPzzgbfWxgJ5E6t",
+        "tokenBVault": "Hq6FcftRwMhVEwC7jJdxpc3BizWY2GtAWG6XGH2Phymv"
+      },
+      "poolB": {
+        "pool": "6zrDKHVZMTT4MVYJJoyKqtPA37WuijTGVXvKF39QU8Qy",
+        "position": "ARBt6RqUxkidomPQK8YQf3AnWtUSqKhAdGc8jFVjP5PB",
+        "positionNft": "A8UJBYCd1MKCsEmVWLUehk87eFDj2BMCAPFjVCpLLPKc",
+        "positionNftAccount": "5QaAb3bULWbAmbDNkLk2NpqtPz81tJwnvSUTZMCJki7K",
+        "tokenAMint": "JBHWNZWBcKGiWd6dJsZ3dh9d9iWbzoRGfg5eunGwxoUJ",
+        "tokenBMint": "54VQffs9PEKHA3GHriHzaozHVjofNDqgod2xqHQH42VQ",
+        "tokenAVault": "BhVyxzSXhjQMuyghkhiz6y3Ym5AhW6BJKL2Dbm1iLRP5",
+        "tokenBVault": "47RP73NwFJUqz9RoLkdQ3rvMJPz71ooJ6vydiV3UemnW"
+      },
+      "poolsSet": true,
+      "template": {
+        "kind": "ratioOutperform",
+        "feedA": "e62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43",
+        "feedB": "ff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
+        "startRatioE9": "27083333333"
+      },
+      "resolveTs": 1790337131,
+      "graceSecs": 86400
+    },
+    {
+      "address": "5AhqSroPQ2uZ7fB23huAzeFPfpeB22Hok8odV1DF9hE5",
+      "nonce": "101",
+      "creator": "GtQ8ZPUWHkbU4s2oRGNPmLh8ZX2wEfovCvHAp1d4Bigj",
+      "question": "(test) Did Bitcoin outperform Ethereum?",
+      "sideALabel": "Bitcoin",
+      "sideBLabel": "Ethereum",
+      "pairA": "BTC",
+      "pairB": "ETH",
+      "collateralMint": "34HSEx1LsWo5SURHsVTwCdTqYTnYypoedFFLzPbam9ez",
+      "yesMint": "J8aY3SRBL3h9dDbp2ALzAEb8bbpvhBgfEmNWFyFBoKGj",
+      "noMint": "3aKWifTUYkjxHNuwisXwTzn2Wg9mCtxD2wsM6ogLCzoB",
+      "poolA": {
+        "pool": "2cPNpfPwGWrFucBjCuUEwhiCsxJVPLMWMNG9iKsh9WyH",
+        "position": "5W2Ebb3PqJoaJgvrrMKnin2cRsCxXNpx9QPs86gVFWgx",
+        "positionNft": "7sRmpPmYj4mXjCG1iuYoWhawQoJyw62tsT6v5M78rUSM",
+        "positionNftAccount": "CcBjmwvsnYd9iqJsyLrozpoHskd4Ho2wifLxAkE2HMjk",
+        "tokenAMint": "J8aY3SRBL3h9dDbp2ALzAEb8bbpvhBgfEmNWFyFBoKGj",
+        "tokenBMint": "6JVAvAZjxJbZNaf46qRfmdACLZZSsDf3o9VYDppyYD3s",
+        "tokenAVault": "6f4QpfG3o3N6FiPU2LqjM7FwD5tWxKSnt4h2keEnwCw3",
+        "tokenBVault": "BoSXoK4hiHScH9NERo8dX3xNvvbFfZMyj1ppqw8muFsv"
+      },
+      "poolB": {
+        "pool": "2BEH1s1Hiag662hXMen6oyzFxwNzuYL85zUrqk6zwzCr",
+        "position": "9NydHYCAu3xtxWkTnbUMXHS8reouAVKVo98EdmAHDLQ",
+        "positionNft": "6Lv27KiFpmZG64VSdehXz6bAaUCTwdXGFgcUizxpanFM",
+        "positionNftAccount": "9YfLphmDHSeL1ha2YMguXigwMbtNhxmezYcfvyNuuQZv",
+        "tokenAMint": "3aKWifTUYkjxHNuwisXwTzn2Wg9mCtxD2wsM6ogLCzoB",
+        "tokenBMint": "54VQffs9PEKHA3GHriHzaozHVjofNDqgod2xqHQH42VQ",
+        "tokenAVault": "8Jdr8fbGycvX2aqstXrgGkXLExsf6AcBPeiS8YAyw5mZ",
+        "tokenBVault": "5kn34jpDKPzdv6cniCv6diuMZLJSTfb6GzCpfKWjdeTr"
+      },
+      "poolsSet": true,
+      "template": {
+        "kind": "ratioOutperform",
+        "feedA": "e62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43",
+        "feedB": "ff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
+        "startRatioE9": "27083333333"
+      },
+      "resolveTs": 1790337397,
       "graceSecs": 86400
     }
   ]
