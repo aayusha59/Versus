@@ -95,7 +95,9 @@ pnpm --filter scripts faucet -- <wallet> [amount=1000] [--mint AAPL]
 Prints (or with `--run` starts, via `wsl -d Ubuntu`) a local validator with Meteora DAMM v2 and the
 Pyth receiver cloned from mainnet. Flags: `--rpc-port 8999` (also shifts faucet/gossip/dynamic ports
 so it can coexist with `anchor test` on 8899), `--ledger /tmp/duel-test-ledger` (WSL-native path;
-a ledger on `/mnt/c` is very slow).
+a ledger on `/mnt/c` is very slow), `--limit-ledger-size 50000000` (default; the test validator
+otherwise keeps only 10,000 shreds, a few minutes of slots, after which `getSignaturesForAddress`
+forgets the crank's transactions and the web ledger / "earned" go blank).
 
 ```
 solana-test-validator --reset --url https://api.mainnet-beta.solana.com \
@@ -108,6 +110,7 @@ solana-test-validator --reset --url https://api.mainnet-beta.solana.com \
   --maybe-clone C7RmcKdjeFscYSyekkmCjvHcnBQd7qJDkeB9RmRtuB3L \
   --maybe-clone 8d9szTd157GKCLcxBqiLUgB7mek3v65rbsy2ErRyjwQ5 \
   --bpf-program AN2TEyFH3zCsv5MENn2uo9LJx69J2EUC8iScAVeDbW25 /mnt/c/.../programs/duel/target/deploy/duel.so \
+  --limit-ledger-size 50000000 \
   --ledger /tmp/duel-test-ledger
 ```
 
@@ -137,6 +140,9 @@ pnpm --filter scripts resolve -- --market "(test)" --manual --winner yes --price
 pnpm --filter scripts bet -- --market "(test)" --redeem --keypair ./.keys/bettor.json
 pnpm --filter scripts faucet -- <your wallet> 1000
 ```
+
+Then the web app in chain mode (`apps/web/README.md`, "Chain mode from a cold start"):
+`NEXT_PUBLIC_DEPLOYMENT=localnet NEXT_PUBLIC_RPC_URL=http://127.0.0.1:8999 pnpm --filter web dev`.
 
 Stop the validator with `wsl -d Ubuntu -- pkill -f solana-test-validator`.
 

@@ -1,8 +1,10 @@
 # @duel/sdk
 
 TypeScript client for paired prediction duels: the `duel` Anchor program, Meteora DAMM v2 pools,
-Pyth prices, bet routing, odds, and rewards math. Browser-safe except `loadDeployment`/`saveDeployment`
-(Node only, lazy `node:fs`).
+Pyth prices, bet routing, odds, and rewards math. Two entries: `@duel/sdk` (everything, Node) and
+`@duel/sdk/browser` (everything except `pyth.ts`, whose receiver dependency reaches gRPC through
+jito-ts, and the Node file helpers in `deployments-node.ts`). The web app imports the browser entry
+and the deployment JSON statically.
 
 ## Usage
 
@@ -25,14 +27,16 @@ await wallet.sendTransaction(tx, connection);
 
 | module | exports |
 |---|---|
-| `client.ts` | `DuelClient` (`createMarket`, `setPools`, `mintSet`, `mergeSet`, `redeem`, `resolve`, `resolveManual`, `depositRewards`, `distribute`, each with an `...Ix` builder; `fetchMarket`, `fetchAllMarkets`, `fetchRewardEpochs`, `marketPda`, `outcomeMints`), `evaluateTemplate`, `templateFeeds`, `sideArg`, `DUEL_PROGRAM_ID` |
-| `pools.ts` | `createPairPool` (DAMM v2 `createCustomPool`, flat fee, `CollectFeeMode.OnlyB`), `getPoolState`, `quoteSwap`, `buildSwapIx`, `claimPositionFee`, `listPositions`, `listPositionsInPool`, `unclaimedFees`, `poolAddressFor`, `poolExists`, `getMintInfo` |
-| `routing.ts` | `routingFromDeployment`, `loadMarketPools`, `previewBet`, `buildBetTx`, `previewSell`, `buildSellTx`, `pairUsdFromPool` |
+| `client.ts` | `DuelClient` (`createMarket`, `setPools`, `mintSet`, `mergeSet`, `redeem`, `resolve`, `resolveManual`, `depositRewards`, `distribute`, each with an `...Ix` builder; `fetchMarket`, `fetchAllMarkets`, `fetchRewardEpochs` (each epoch carries `recipients`: per-wallet payouts decoded from the transaction's token-balance deltas), `marketPda`, `outcomeMints`), `rewardRecipients`, `evaluateTemplate`, `templateFeeds`, `sideArg`, `DUEL_PROGRAM_ID` |
+| `pools.ts` | `createPairPool` (DAMM v2 `createCustomPool`, flat fee, `CollectFeeMode.OnlyB`), `getPoolState`, `getPoolStates`, `getPoolStatesBatch` (one RPC round trip), `poolFeeBps`, `poolLpFees`, `quoteSwap`, `buildSwapIx`, `claimPositionFee`, `listPositions`, `listPositionsInPool`, `unclaimedFees`, `poolAddressFor`, `poolExists`, `getMintInfo` |
+| `routing.ts` | `routingFromDeployment`, `loadMarketPools`, `marketPoolsFromStates`, `previewBet`, `buildBetTx`, `previewSell`, `buildSellTx`, `pairUsdFromPool` |
+| `feeds.ts` | `normalizeFeedId`, `feedIdBytes`, `feedIdFromBytes` (no `Buffer`; re-exported by both entries) |
 | `odds.ts` | `oddsFromPools`, `oddsFromPrices`, `oddsFromSqrtPrices`, `priceFromSqrtPrice`, `poolPriceOf`, `formatPct` |
 | `rewards.ts` | `snapshotHolders`, `computeProRata`, `chunk` (max 12 per `distribute`), `formatLedgerLine` |
 | `pyth.ts` | `getLatestPrices`, `getLatestPricesBySymbol`, `getLatestVaas`, `postPriceUpdates`, `PYTH_FEEDS`, `HERMES_URL`, `PYTH_RECEIVER_PROGRAM_ID`, `pythLocalnetAccounts` |
 | `registry.ts` | `ASSETS` (AAPL, NVDA, TSLA, F, SPY, GLD, BTC, ETH, ZEC, HYPE, SOL: mainnet mint, decimals, Pyth feed), `getAsset`, `assetsForDeployment`, `mintForCluster` |
-| `deployments.ts` | `parseDeployment`, `findMarket`, `loadDeployment`, `saveDeployment`, `clusterFromRpcUrl` |
+| `deployments.ts` | `parseDeployment`, `findMarket`, `emptyDeployment`, `clusterFromRpcUrl` (browser-safe) |
+| `deployments-node.ts` | `loadDeployment`, `loadDeploymentIfExists`, `saveDeployment`, `deploymentPath` (Node only, lazy `node:fs`) |
 | `types.ts` | `Market`, `Side`, `Odds`, `Position`, `RewardEpoch`, `Template`, `Deployment`, `DeployedMarket`, ... |
 
 ## Conventions
@@ -49,7 +53,8 @@ await wallet.sendTransaction(tx, connection);
   `AN2TEyFH3zCsv5MENn2uo9LJx69J2EUC8iScAVeDbW25`); `idl/duel.ts` is its camelCase type. Copy both from
   `programs/duel/target/{idl,types}` after every program change.
 - `deployments/<cluster>.json` is written by `scripts/src/bootstrap.ts`. `localnet.json` only matches
-  the validator it was bootstrapped on; `devnet.json` is the one the web app should ship with.
+  the validator it was bootstrapped on; `devnet.json` is the one the web app should ship with (it is
+  an empty placeholder until `bootstrap` runs against devnet, so the web app can import it statically).
 - The root `package.json` pins `@solana/web3.js` to one version via `pnpm.overrides` (the Pyth
   receiver's `jito-ts` otherwise pulls a second copy whose `rpc-websockets` import breaks at runtime).
 
