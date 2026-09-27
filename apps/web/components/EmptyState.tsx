@@ -12,18 +12,18 @@ interface EmptyStateProps {
 
 export function EmptyState({ children, action, actionNode, className }: EmptyStateProps) {
   return (
-    <div className={cx("py-10", className)}>
+    <div className={cx("card px-6 py-12 flex flex-col items-center text-center", className)}>
       <p className="serif text-xl max-w-[34ch] balance-text">{children}</p>
       {actionNode ? (
-        <div className="mt-5">{actionNode}</div>
+        <div className="mt-6">{actionNode}</div>
       ) : action ? (
-        <div className="mt-5">
+        <div className="mt-6">
           {action.href ? (
-            <LinkButton href={action.href} variant="outline">
+            <LinkButton href={action.href} variant="bracket">
               {action.label}
             </LinkButton>
           ) : (
-            <Button variant="outline" onClick={action.onClick}>
+            <Button variant="bracket" onClick={action.onClick}>
               {action.label}
             </Button>
           )}

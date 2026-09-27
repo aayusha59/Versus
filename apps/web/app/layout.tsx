@@ -1,34 +1,32 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { archivo, instrument } from "@/lib/fonts";
+import { mono, sans } from "@/lib/fonts";
 import { Providers } from "./providers";
-import { Rail } from "@/components/Rail";
+import { HeroHeader } from "@/components/Nav";
+import FooterSection from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: { default: "Versus", template: "%s | Versus" },
-  description: "Back a side. Get paid in what it is made of.",
+  description: "Prediction duels on Solana. Back a side, get paid in the stock it is made of.",
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#f4f1ea",
+  themeColor: "#0a0a0a",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${archivo.variable} ${instrument.variable}`}>
-      <body>
+    <html lang="en" className={`dark ${sans.variable} ${mono.variable}`}>
+      <body className="font-sans antialiased">
         <a className="skip" href="#main">
           Skip to content
         </a>
         <Providers>
-          <div className="shell">
-            <Rail />
-            <main id="main" className="shell-main pb-24">
-              {children}
-            </main>
-          </div>
+          <HeroHeader />
+          {children}
+          <FooterSection />
         </Providers>
       </body>
     </html>

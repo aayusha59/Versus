@@ -3,14 +3,14 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { cx } from "@/lib/cx";
 import type { Side } from "@/lib/types";
 
-type Variant = "primary" | "outline" | "ghost";
+type Variant = "primary" | "outline" | "ghost" | "bracket";
 type Size = "sm" | "md" | "lg";
 
 interface BaseProps {
   variant?: Variant;
   size?: Size;
   block?: boolean;
-  /** Ink the primary fill in a fighter's colour: "a" ink, "b" vermilion. */
+  /** Colour the button for a fighter: "a" green, "b" red. */
   side?: Side;
   className?: string;
   children: ReactNode;

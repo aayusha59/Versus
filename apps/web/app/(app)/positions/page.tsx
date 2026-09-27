@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { Market, Position } from "@/lib/types";
 import { useBalance, useMarkets, usePositions, useRedeem } from "@/lib/hooks";
 import { useOwner } from "@/lib/owner";
-import { amount, signedPct, token, usd, MIDDOT } from "@/lib/format";
+import { amount, signedPct, token, usd } from "@/lib/format";
 import { cx } from "@/lib/cx";
 import { Reveal } from "@/components/Reveal";
 import { MarketMatchup } from "@/components/Matchup";
@@ -13,9 +13,9 @@ import { Button, LinkButton } from "@/components/Button";
 import { EmptyState } from "@/components/EmptyState";
 import { StatusLine, IDLE, type Status } from "@/components/StatusLine";
 import { WalletButton } from "@/components/WalletButton";
-import { Stamp } from "@/components/Stamp";
+import { Stamp, StatusStamp } from "@/components/Stamp";
 
-function CornerRow({ p, m, i, owner }: { p: Position; m: Market; i: number; owner: string }) {
+function PositionCard({ p, m, i, owner }: { p: Position; m: Market; i: number; owner: string }) {
   const redeem = useRedeem();
   const [status, setStatus] = useState<Status>(IDLE);
   const f = p.side === "a" ? m.a : m.b;
@@ -34,24 +34,19 @@ function CornerRow({ p, m, i, owner }: { p: Position; m: Market; i: number; owne
   };
 
   return (
-    <Reveal as="li" i={i} className="py-6 lg:grid lg:grid-cols-12 lg:gap-x-[var(--gap)] lg:items-start">
-      <div className="lg:col-span-4">
-        <div className="flex items-center gap-2 label">
-          <span className={cx("font-semibold", p.side === "a" ? "text-side-a" : "text-side-b")}>{f.label} corner</span>
-          <span aria-hidden="true">{MIDDOT}</span>
-          <span className="tnum">No. {String(m.no).padStart(2, "0")}</span>
-          {resolved ? (
-            <Stamp tone={won ? "gain" : "ink"} className="ml-2">
-              {won ? "Won" : "Lost"}
-            </Stamp>
-          ) : null}
+    <Reveal as="li" i={i} className="card card-pad flex flex-col gap-5 lg:grid lg:grid-cols-12 lg:items-center lg:gap-6">
+      <div className="lg:col-span-5">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <Stamp tone={p.side}>{f.label} side</Stamp>
+          <StatusStamp market={m} />
+          {resolved ? <Stamp tone={won ? "gain" : "ink"}>{won ? "Won" : "Lost"}</Stamp> : null}
         </div>
-        <Link href={`/d/${m.id}`} className="block mt-2 w-fit">
+        <Link href={`/d/${m.id}`} className="block mt-3 w-fit hover:underline underline-offset-4 decoration-1 decoration-fg-3">
           <MarketMatchup market={m} size="lg" as="h2" />
         </Link>
       </div>
 
-      <dl className="dl lg:col-span-3 mt-4 lg:mt-0">
+      <dl className="dl lg:col-span-2">
         <dt>Size</dt>
         <dd className="tnum whitespace-nowrap">
           {amount(p.size)} {f.label}
@@ -65,7 +60,7 @@ function CornerRow({ p, m, i, owner }: { p: Position; m: Market; i: number; owne
         </dd>
       </dl>
 
-      <dl className="dl lg:col-span-3 mt-3 lg:mt-0">
+      <dl className="dl lg:col-span-3">
         <dt>Earned</dt>
         <dd className="tnum whitespace-nowrap">{token(p.earnedPair, f.pairSymbol)}</dd>
         <dt>{resolved ? "Claim" : "Accruing"}</dt>
@@ -74,14 +69,14 @@ function CornerRow({ p, m, i, owner }: { p: Position; m: Market; i: number; owne
         </dd>
       </dl>
 
-      <div className="lg:col-span-2 mt-4 lg:mt-0 flex flex-col gap-2 lg:items-end">
+      <div className="lg:col-span-2 flex flex-col gap-2 lg:items-end">
         {resolved ? (
           won && p.redeemableUsdc > 0 ? (
             <Button variant="primary" side={p.side} size="sm" onClick={doRedeem} disabled={redeem.isPending}>
               Redeem {usd(p.redeemableUsdc)}
             </Button>
           ) : (
-            <span className="text-sm text-ink-2">Nothing to redeem</span>
+            <span className="text-sm text-muted-foreground">Nothing to redeem</span>
           )
         ) : (
           <LinkButton href={`/d/${m.id}`} variant="outline" size="sm">
@@ -94,39 +89,47 @@ function CornerRow({ p, m, i, owner }: { p: Position; m: Market; i: number; owne
   );
 }
 
-export default function MePage() {
+function Stat({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="card card-pad">
+      <p className="font-mono text-xs uppercase tracking-[0.1em] text-muted-foreground">{label}</p>
+      <p className="mt-2 text-2xl font-semibold tnum">{value}</p>
+    </div>
+  );
+}
+
+export default function PositionsPage() {
   const { owner, demoAvailable, connectDemo } = useOwner();
   const positions = usePositions(owner);
   const markets = useMarkets();
   const balance = useBalance(owner);
 
   const header = (
-    <Reveal as="header" i={0} className="pt-8 lg:pt-12">
-      <h1 className="display text-2xl">My corners</h1>
-    </Reveal>
+    <div>
+      <p className="font-mono text-sm uppercase text-muted-foreground">Your corners</p>
+      <h1 className="mt-2 text-4xl font-semibold lg:text-5xl">Positions</h1>
+    </div>
   );
 
   if (!owner) {
     return (
       <>
         {header}
-        <Reveal i={1}>
-          <hr className="double mt-5" />
-          <EmptyState
-            actionNode={
-              <div className="flex flex-wrap items-center gap-3">
-                <WalletButton variant="outline" />
-                {demoAvailable ? (
-                  <Button variant="ghost" onClick={connectDemo}>
-                    Use the demo corner
-                  </Button>
-                ) : null}
-              </div>
-            }
-          >
-            Connect a wallet to see your corners: every side you hold, what it has earned, and what you can redeem.
-          </EmptyState>
-        </Reveal>
+        <EmptyState
+          className="mt-10"
+          actionNode={
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <WalletButton variant="primary" />
+              {demoAvailable ? (
+                <Button variant="ghost" onClick={connectDemo}>
+                  Use the demo wallet
+                </Button>
+              ) : null}
+            </div>
+          }
+        >
+          Connect a wallet to see every side you hold, what it has earned, and what you can redeem.
+        </EmptyState>
       </>
     );
   }
@@ -140,52 +143,52 @@ export default function MePage() {
       return xr - yr || x.m.no - y.m.no;
     });
 
-  const duels = new Set(rows.map((r) => r.m.id)).size;
   const earned = new Map<string, number>();
   for (const { p, m } of rows) {
     const sym = p.side === "a" ? m.a.pairSymbol : m.b.pairSymbol;
     earned.set(sym, (earned.get(sym) ?? 0) + p.earnedPair);
   }
-  const earnedLine =
-    earned.size === 0
-      ? "nothing yet"
-      : [...earned.entries()].map(([sym, v]) => token(v, sym)).join(` ${MIDDOT} `);
   const redeemable = rows.reduce((s, r) => s + r.p.redeemableUsdc, 0);
+  const value = rows.reduce((s, r) => s + r.p.value, 0);
 
   return (
     <>
       {header}
-      <Reveal i={1}>
-        <p className="serif text-xl mt-4 max-w-[40ch] balance-text">
-          {rows.length === 1 ? "One corner" : `${rows.length} corners`} across{" "}
-          {duels === 1 ? "one duel" : `${duels} duels`}. Earned {earnedLine}.
-          {redeemable > 0 ? ` ${usd(redeemable)} waiting to be redeemed.` : ""}
-        </p>
-        <div className="flex flex-wrap gap-x-6 gap-y-1 mt-4 text-sm tnum">
-          <span>
-            <span className="text-ink-2">Balance</span> {amount(balance.data?.usdc ?? 0)} USDC
-          </span>
-          {Object.entries(balance.data?.pair ?? {}).map(([sym, v]) => (
-            <span key={sym}>
-              <span className="text-ink-2">Holding</span> {token(v, sym)}
-            </span>
-          ))}
-        </div>
-        <hr className="double mt-5" />
-      </Reveal>
+      <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Stat label="Balance" value={`${amount(balance.data?.usdc ?? 0)} USDC`} />
+        <Stat label="Positions" value={`${rows.length} across ${new Set(rows.map((r) => r.m.id)).size} duels`} />
+        <Stat label="Value" value={usd(value)} />
+        <Stat
+          label="Earned"
+          value={
+            earned.size === 0 ? (
+              <span className="text-muted-foreground">nothing yet</span>
+            ) : (
+              <span className="flex flex-col text-lg leading-tight">
+                {[...earned.entries()].map(([sym, v]) => (
+                  <span key={sym}>{token(v, sym)}</span>
+                ))}
+              </span>
+            )
+          }
+        />
+      </div>
+      {redeemable > 0 ? (
+        <p className="mt-4 text-sm text-side-a">{usd(redeemable)} is waiting to be redeemed.</p>
+      ) : null}
 
       {positions.isPending ? (
-        <p className="pt-8 text-sm text-ink-2" role="status">
-          Counting your corners.
+        <p className="mt-10 text-sm text-muted-foreground" role="status">
+          Counting your positions.
         </p>
       ) : rows.length === 0 ? (
-        <EmptyState action={{ label: "Go to the board", href: "/" }}>
-          No corners yet. Pick a duel on the board and back a side.
+        <EmptyState className="mt-10" action={{ label: "Go to the board", href: "/board" }}>
+          No positions yet. Pick a duel on the board and back a side.
         </EmptyState>
       ) : (
-        <ol className="hairline-rows">
+        <ol className="mt-8 flex flex-col gap-3">
           {rows.map((r, i) => (
-            <CornerRow key={`${r.m.id}:${r.p.side}`} p={r.p} m={r.m} i={i + 2} owner={owner} />
+            <PositionCard key={`${r.m.id}:${r.p.side}`} p={r.p} m={r.m} i={i} owner={owner} />
           ))}
         </ol>
       )}

@@ -34,7 +34,7 @@ export function Chart({ points, aLabel, bLabel, height = 220 }: ChartProps) {
 
   if (points.length < 4) {
     return (
-      <p className="serif text-lg text-ink-2 max-w-[40ch]">
+      <p className="text-sm text-ink-2 max-w-[40ch]">
         Not enough history to draw yet. The line starts once the board moves.
       </p>
     );
@@ -142,8 +142,8 @@ export function Chart({ points, aLabel, bLabel, height = 220 }: ChartProps) {
       </svg>
       <div className="flex items-baseline justify-between gap-4 mt-2 text-xs text-ink-2 min-h-[1.4em]">
         <span>
-          <span className="text-side-a font-semibold">{aLabel}</span> in ink,{" "}
-          <span className="text-side-b font-semibold">{bLabel}</span> in vermilion.
+          <span className="text-side-a font-semibold">{aLabel}</span> in green,{" "}
+          <span className="text-side-b font-semibold">{bLabel}</span> in red.
         </span>
         <span className="tnum text-right" aria-live="polite">
           {hp

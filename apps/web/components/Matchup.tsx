@@ -15,20 +15,20 @@ interface MatchupProps {
   className?: string;
 }
 
-const SIZE = { lg: "text-lg", xl: "text-xl", "2xl": "text-2xl" } as const;
+const SIZE = { lg: "text-2xl", xl: "text-3xl", "2xl": "text-5xl lg:text-6xl" } as const;
 
-/** The fight-poster headline: left fighter in ink, right in vermilion, "vs" in serif italic. */
+/** The matchup headline: left fighter in green, right in red, "vs" small and muted. */
 export function Matchup({ a, b, joiner = "vs", size = "xl", winner = null, as = "p", className }: MatchupProps) {
   return createElement(
     as,
-    { className: cx("display balance-text", SIZE[size], className) },
+    { className: cx("display", SIZE[size], className) },
     <span className={cx("text-side-a", winner === "b" && "struck")}>{a}</span>,
     <span className="vs">{joiner}</span>,
     <span className={cx("text-side-b", winner === "a" && "struck")}>{b}</span>,
   );
 }
 
-/** Headline parts for a market; PriceAbove prints "APPLE above $300". */
+/** Headline parts for a market; PriceAbove prints "Apple above $300". */
 export function matchupParts(m: Market): { a: string; b: string; joiner: string } {
   if (m.template.kind === "PriceAbove") {
     return { a: m.a.label, b: usd(m.template.threshold), joiner: "above" };
