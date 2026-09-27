@@ -3,7 +3,6 @@ import "./globals.css";
 import { mono, sans } from "@/lib/fonts";
 import { Providers } from "./providers";
 import { HeroHeader } from "@/components/Nav";
-import FooterSection from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: { default: "Versus", template: "%s | Versus" },
@@ -26,7 +25,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           <HeroHeader />
           {children}
-          <FooterSection />
         </Providers>
       </body>
     </html>
