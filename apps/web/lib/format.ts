@@ -22,7 +22,7 @@ const numFmt = (min: number, max: number) =>
 
 const n0 = numFmt(0, 0);
 const n2 = numFmt(2, 2);
-const n4 = numFmt(0, 4);
+const tiny = new Intl.NumberFormat("en-US", { maximumSignificantDigits: 3 });
 
 export const EN_DASH = "\u2013";
 export const MIDDOT = "\u00b7";
@@ -64,7 +64,7 @@ export function token(v: number, symbol: string, opts: { dp?: number } = {}): st
   const dp = opts.dp;
   let s: string;
   if (dp !== undefined) s = numFmt(dp, dp).format(v);
-  else if (v !== 0 && Math.abs(v) < 0.01) s = n4.format(v);
+  else if (v !== 0 && Math.abs(v) < 0.01) s = tiny.format(v);
   else s = n2.format(v);
   return `${s} ${symbol}`;
 }

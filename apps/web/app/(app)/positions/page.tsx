@@ -145,6 +145,7 @@ export default function PositionsPage() {
 
   const earned = new Map<string, number>();
   for (const { p, m } of rows) {
+    if (p.earnedPair <= 0) continue;
     const sym = p.side === "a" ? m.a.pairSymbol : m.b.pairSymbol;
     earned.set(sym, (earned.get(sym) ?? 0) + p.earnedPair);
   }
