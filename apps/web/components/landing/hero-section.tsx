@@ -57,10 +57,10 @@ export default function HeroSection() {
               </Button>
             </AnimatedGroup>
             <AnimatedGroup variants={groupVariants} className="mt-16 flex flex-col items-center gap-4">
-              <p className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground bg-black/40 rounded-md px-1">
+              <p className="font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
                 Powered by
               </p>
-              <span className="inline-flex items-center gap-3 bg-black/40 rounded-md px-2 py-1" aria-label="Solana">
+              <span className="inline-flex items-center gap-3" aria-label="Solana">
                 <SolanaMark className="h-7 w-auto" />
                 <span className="text-foreground text-2xl font-semibold uppercase tracking-[0.12em] leading-none">
                   Solana
