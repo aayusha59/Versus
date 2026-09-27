@@ -1,0 +1,26 @@
+[package]
+name = "duel"
+version = "0.1.0"
+description = "Paired prediction duels: YES/NO outcome tokens fully collateralized by USDC, resolved by Pyth."
+edition = "2021"
+# platform-tools v1.51 ships rustc/cargo 1.84; the MSRV-aware resolver keeps deps below that.
+rust-version = "1.84"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "duel"
+
+[features]
+default = []
+cpi = ["no-entrypoint"]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
+
+[dependencies]
+anchor-lang = { version = "=0.32.1", features = ["init-if-needed"] }
+anchor-spl = { version = "=0.32.1" }
+
+[dev-dependencies]
+sha2 = "0.10"

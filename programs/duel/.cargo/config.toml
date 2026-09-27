@@ -1,0 +1,6 @@
+# MSRV-aware dependency resolution (cargo >= 1.84). The host toolchain writes Cargo.lock but
+# cargo-build-sbf compiles with platform-tools' cargo 1.84, which cannot parse edition-2024
+# crates; with programs/duel/Cargo.toml `rust-version = "1.84"` this keeps every transitive
+# dependency at a version that toolchain accepts.
+[resolver]
+incompatible-rust-versions = "fallback"
