@@ -48,8 +48,14 @@ jobs:
       - name: Build
         run: vercel build --yes $PROD_FLAG --token=${{ secrets.VERCEL_TOKEN }}
 
+      # With git metadata present, Vercel attributes the deploy to the commit author and
+      # blocks it when they aren't a member of the Vercel account (the CLI then waits
+      # forever on "Building…"). Hiding .git makes it deploy as the token owner.
       - name: Deploy
+        timeout-minutes: 10
         run: |
+          mv .git "$RUNNER_TEMP/.git"
+          trap 'mv "$RUNNER_TEMP/.git" .git' EXIT
           url=$(vercel deploy --prebuilt --yes $PROD_FLAG --token=${{ secrets.VERCEL_TOKEN }})
           echo "url=$url" >> "$GITHUB_OUTPUT"
           echo "**$TARGET** deploy of \`${{ github.ref_name }}\`: $url" >> "$GITHUB_STEP_SUMMARY"
