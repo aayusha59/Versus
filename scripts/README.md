@@ -90,6 +90,17 @@ pnpm --filter scripts resolve -- --market <pk|label> --manual --winner yes --pri
 pnpm --filter scripts faucet -- <wallet> [amount=1000] [--mint AAPL]
 ```
 
+### `faucet:setup`
+
+Creates `.keys/faucet-<cluster>.json` and tops it up from the operator to `--sol` SOL and `--usdc`
+mock USDC (transfers; it gets no mint authority). The web app's `/api/faucet` refuses the operator
+key on devnet, so point it at this one: `FAUCET_KEYPAIR_PATH` locally, or the file's JSON array in
+`FAUCET_KEYPAIR` on the host. Re-run to refill.
+
+```
+pnpm --filter scripts faucet:setup -- [--sol 1] [--usdc 100000] [--out .keys/faucet-devnet.json]
+```
+
 ### `validator`
 
 Prints (or with `--run` starts, via `wsl -d Ubuntu`) a local validator with Meteora DAMM v2 and the

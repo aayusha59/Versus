@@ -24,7 +24,7 @@ No wallet, RPC or deployment is needed to browse every route: demo mode is the d
 | `NEXT_PUBLIC_DEMO`       | unset                          | `1` forces demo mode (fixtures plus a ticking odds simulator, nothing touches a chain).                              |
 | `NEXT_PUBLIC_DEPLOYMENT` | unset                          | `localnet` or `devnet`: which `packages/sdk/deployments/<cluster>.json` to serve (both are bundled statically). Unset means demo. |
 | `NEXT_PUBLIC_RPC_URL`    | the deployment's `rpcUrl`      | RPC endpoint for the wallet adapter and the SDK, e.g. `http://127.0.0.1:8999`. Shown under the network stamp.        |
-| `FAUCET_KEYPAIR_PATH`    | `../../scripts/.keys/id.json`  | Server only. Operator keypair (mint authority) the `/api/faucet` route uses on localnet/devnet. Never read on the client. |
+| `FAUCET_KEYPAIR_PATH`    | `../../scripts/.keys/id.json`  | Server only. Keypair the `/api/faucet` route pays from. Localnet: the operator (it mints). Devnet: a dedicated key from `pnpm --filter scripts faucet:setup` (it transfers); the operator key is refused. `FAUCET_KEYPAIR` takes the JSON array inline for hosts. Limits: 5 requests per IP per hour, and wallets holding 1,000 USDC or more are turned away. Never read on the client. |
 
 Demo mode is on when `NEXT_PUBLIC_DEMO=1` **or** when `NEXT_PUBLIC_DEPLOYMENT` names no cluster,
 so a fresh checkout always runs. Copy `.env.example` to `.env.local` to change it.
