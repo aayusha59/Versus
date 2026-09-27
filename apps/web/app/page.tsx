@@ -1,7 +1,6 @@
 import Dither from "@/components/Dither";
 import HeroSection from "@/components/landing/hero-section";
 import Features from "@/components/landing/features";
-import Agenda from "@/components/landing/agenda";
 import CallToAction from "@/components/landing/call-to-action";
 
 export default function Home() {
@@ -22,7 +21,6 @@ export default function Home() {
       </div>
       <HeroSection />
       <Features />
-      <Agenda />
       <CallToAction />
     </>
   );
