@@ -1,5 +1,5 @@
 import type { Market, RewardEpoch, Side } from "./types";
-import { EN_DASH, oddsPair, token, utcDateTime, utcTime } from "./format";
+import { EN_DASH, oddsPair, ratio, token, utcDateTime, utcTime } from "./format";
 import { TEMPLATE_META } from "./compose";
 
 /** "Apple leads 54-46." / "Dead even at 50-50." / "Zcash wins. Closed 71-29." */
@@ -43,7 +43,7 @@ export function ruleLine(m: Market): string {
     case "CapCompare":
       return `Price times shares outstanding for each side at the bell. The bigger company wins; ${m.a.label} on a tie.`;
     case "RatioOutperform":
-      return `The ${m.a.symbol}/${m.b.symbol} price ratio at the bell against ${m.template.startRatio.toFixed(2)}, the ratio when the duel opened. Higher and ${m.a.label} wins.`;
+      return `The ${m.a.symbol}/${m.b.symbol} price ratio at the bell against ${ratio(m.template.startRatio)}, the ratio when the duel opened. Higher and ${m.a.label} wins.`;
     case "PriceAbove":
       return `${m.a.feedName} at the bell. Above the line and ${m.a.label} wins; at or under and the line holds.`;
   }

@@ -10,6 +10,7 @@ import {
   compactCount,
   compactUsd,
   oddsPair,
+  ratio,
   resolvesIn,
   shortKey,
   signedPct,
@@ -30,6 +31,7 @@ import { Chart } from "@/components/Chart";
 import { Ledger } from "@/components/Ledger";
 import { SectionHead } from "@/components/Rule";
 import { EmptyState } from "@/components/EmptyState";
+import { FighterLogos } from "@/components/AssetLogo";
 import { Button } from "@/components/Button";
 import { StatusLine, IDLE, type Status } from "@/components/StatusLine";
 import { WalletButton } from "@/components/WalletButton";
@@ -173,7 +175,7 @@ function HowItResolves({ market: m }: { market: Market }) {
         <>
           <dt>Start ratio</dt>
           <dd className="tnum">
-            {t.startRatio.toFixed(2)} {m.a.symbol}/{m.b.symbol}, fixed at creation.
+            {ratio(t.startRatio)} {m.a.symbol}/{m.b.symbol}, fixed at creation.
           </dd>
         </>
       ) : null}
@@ -251,6 +253,7 @@ export default function DuelPage() {
           <StatusStamp market={market} />
           <span className="text-xs text-muted-foreground font-mono ml-1">No. {String(market.no).padStart(2, "0")}</span>
         </div>
+        <FighterLogos market={market} size="lg" className="mt-5" />
         <MarketMatchup market={market} size="2xl" as="h1" className="mt-4" />
         <p className="mt-4 text-lg text-muted-foreground max-w-[44ch] text-pretty">{market.question}</p>
         <p className="text-sm text-muted-foreground mt-2 max-w-[60ch]">

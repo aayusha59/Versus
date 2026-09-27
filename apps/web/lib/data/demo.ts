@@ -2,11 +2,13 @@ import type {
   BetPreview,
   Fighter,
   Market,
+  MarketStatus,
   Odds,
   Position,
   RewardEpoch,
   SellPreview,
   Side,
+  Template,
 } from "../types";
 import { getAsset, type Asset } from "../registry";
 import { composeQuestion, priceAboveRight, slugify } from "../compose";
@@ -115,118 +117,132 @@ function baseMarket(partial: MarketSeed): Market {
   };
 }
 
+/* ------------------------------------------------------------------ */
+/* The card                                                            */
+/* ------------------------------------------------------------------ */
+
+type Kind = "CapCompare" | "RatioOutperform";
+
+/** A UTC bell time: [year, month index, day, hour]. */
+type Bell = [number, number, number, number];
+
+interface Seed {
+  id: string;
+  a: string;
+  b: string;
+  kind: Kind;
+  /** Days from creation to now (open) or to the bell (settled). */
+  age: number;
+  bell: Bell;
+  /** Left-side odds now, or the closing odds once settled. */
+  oddsA: number;
+  implied?: number;
+  feeBps?: number;
+  minted: number;
+  depth: number;
+  holders: [number, number];
+  /** Fees paid out to each side so far, in that side's pair token. */
+  fees: [number, number];
+  /** 30-day price moves, as fractions. */
+  change: [number, number];
+  epochs: number;
+  settled?: { winner: Side; redeemed: number; manual?: boolean };
+}
+
+/**
+ * Twenty-one live duels and five settled ones. Cap-compare odds follow the registry's
+ * price-times-shares; outperform duels pit crypto, indexes and commodities against each other.
+ * Board numbers are assigned in creation order, so the list order here does not matter.
+ */
+const SEEDS: Seed[] = [
+  /* Live */
+  { id: "apple-vs-nvidia", a: "AAPL", b: "NVDA", kind: "CapCompare", age: 41, bell: [2026, 11, 31, 21], oddsA: 0.54, implied: 1.008, minted: 184_200, depth: 58_000, holders: [412, 388], fees: [31.42, 40.18], change: [0.062, -0.031], epochs: 112 },
+  { id: "bitcoin-vs-gold", a: "BTC", b: "GLD", kind: "RatioOutperform", age: 58, bell: [2026, 11, 31, 21], oddsA: 0.49, implied: 1.005, minted: 141_000, depth: 44_000, holders: [508, 462], fees: [0.0388, 9.84], change: [0.041, 0.052], epochs: 168 },
+  { id: "microsoft-vs-apple", a: "MSFT", b: "AAPL", kind: "CapCompare", age: 52, bell: [2026, 11, 31, 21], oddsA: 0.42, implied: 1.007, minted: 132_500, depth: 46_000, holders: [301, 364], fees: [7.92, 12.46], change: [0.021, 0.062], epochs: 150 },
+  { id: "google-vs-amazon", a: "GOOGL", b: "AMZN", kind: "CapCompare", age: 47, bell: [2026, 10, 20, 21], oddsA: 0.71, implied: 1.009, minted: 88_700, depth: 31_000, holders: [276, 198], fees: [14.8, 9.63], change: [0.077, -0.018], epochs: 128 },
+  { id: "solana-vs-ethereum", a: "SOL", b: "ETH", kind: "RatioOutperform", age: 36, bell: [2026, 9, 31, 0], oddsA: 0.57, implied: 1.006, minted: 76_300, depth: 27_000, holders: [389, 297], fees: [12.42, 0.871], change: [0.104, 0.087], epochs: 98 },
+  { id: "nvidia-vs-bitcoin", a: "NVDA", b: "BTC", kind: "RatioOutperform", age: 33, bell: [2026, 11, 31, 21], oddsA: 0.52, implied: 1.004, minted: 118_900, depth: 39_000, holders: [421, 377], fees: [16.7, 0.0291], change: [-0.031, 0.041], epochs: 96 },
+  { id: "meta-vs-netflix", a: "META", b: "NFLX", kind: "CapCompare", age: 29, bell: [2026, 11, 18, 21], oddsA: 0.93, implied: 1.012, feeBps: 50, minted: 19_600, depth: 9_000, holders: [88, 41], fees: [1.12, 0.34], change: [0.048, 0.061], epochs: 62 },
+  { id: "coinbase-vs-robinhood", a: "COIN", b: "HOOD", kind: "CapCompare", age: 27, bell: [2026, 11, 31, 21], oddsA: 0.38, implied: 1.006, minted: 64_200, depth: 22_000, holders: [244, 271], fees: [6.31, 17.9], change: [-0.052, 0.138], epochs: 74 },
+  { id: "sp-500-vs-nasdaq-100", a: "SPY", b: "QQQ", kind: "RatioOutperform", age: 24, bell: [2026, 11, 18, 21], oddsA: 0.36, implied: 1.003, feeBps: 30, minted: 210_400, depth: 72_000, holders: [612, 588], fees: [9.72, 11.4], change: [0.019, 0.031], epochs: 71 },
+  { id: "bitcoin-vs-ethereum", a: "BTC", b: "ETH", kind: "RatioOutperform", age: 19, bell: [2026, 10, 30, 0], oddsA: 0.39, implied: 1.004, minted: 96_400, depth: 36_000, holders: [296, 341], fees: [0.0412, 1.218], change: [0.041, 0.087], epochs: 61 },
+  { id: "amd-vs-broadcom", a: "AMD", b: "AVGO", kind: "CapCompare", age: 17, bell: [2026, 9, 16, 20], oddsA: 0.07, implied: 1.014, minted: 8_400, depth: 4_200, holders: [63, 29], fees: [0.92, 0.41], change: [0.093, 0.027], epochs: 40 },
+  { id: "microstrategy-vs-bitcoin", a: "MSTR", b: "BTC", kind: "RatioOutperform", age: 15, bell: [2026, 10, 13, 21], oddsA: 0.44, implied: 1.005, minted: 52_800, depth: 19_000, holders: [231, 206], fees: [4.87, 0.0187], change: [-0.112, 0.041], epochs: 44 },
+  { id: "palantir-vs-nvidia", a: "PLTR", b: "NVDA", kind: "RatioOutperform", age: 13, bell: [2026, 9, 27, 21], oddsA: 0.41, implied: 1.006, minted: 47_100, depth: 17_000, holders: [318, 262], fees: [8.24, 4.13], change: [0.146, -0.031], epochs: 38 },
+  { id: "xrp-vs-dogecoin", a: "XRP", b: "DOGE", kind: "RatioOutperform", age: 12, bell: [2026, 9, 30, 0], oddsA: 0.66, implied: 1.008, minted: 33_900, depth: 12_000, holders: [402, 517], fees: [418.6, 6_120], change: [0.052, -0.071], epochs: 35 },
+  { id: "tesla-vs-ford", a: "TSLA", b: "F", kind: "CapCompare", age: 9, bell: [2026, 9, 30, 20], oddsA: 0.91, implied: 1.011, feeBps: 50, minted: 22_800, depth: 14_000, holders: [203, 57], fees: [4.06, 88.5], change: [0.118, 0.012], epochs: 24 },
+  { id: "sui-vs-avalanche", a: "SUI", b: "AVAX", kind: "RatioOutperform", age: 8, bell: [2026, 10, 30, 0], oddsA: 0.53, implied: 1.004, minted: 27_400, depth: 10_000, holders: [214, 188], fees: [186.2, 21.7], change: [0.071, 0.033], epochs: 22 },
+  { id: "hyperliquid-vs-solana", a: "HYPE", b: "SOL", kind: "RatioOutperform", age: 7, bell: [2026, 9, 24, 0], oddsA: 0.62, implied: 1.007, minted: 39_800, depth: 15_000, holders: [267, 241], fees: [24.9, 4.62], change: [-0.093, 0.104], epochs: 19 },
+  { id: "chainlink-vs-solana", a: "LINK", b: "SOL", kind: "RatioOutperform", age: 5, bell: [2026, 11, 11, 0], oddsA: 0.31, implied: 1.003, minted: 18_200, depth: 7_000, holders: [141, 176], fees: [17.3, 1.94], change: [0.012, 0.104], epochs: 13 },
+  { id: "bnb-vs-ethereum", a: "BNB", b: "ETH", kind: "RatioOutperform", age: 4, bell: [2026, 11, 31, 0], oddsA: 0.45, implied: 1.005, minted: 21_700, depth: 8_500, holders: [122, 163], fees: [0.61, 0.152], change: [0.038, 0.087], epochs: 10 },
+  { id: "tesla-vs-meta", a: "TSLA", b: "META", kind: "CapCompare", age: 2, bell: [2027, 2, 31, 21], oddsA: 0.33, implied: 1.009, minted: 14_600, depth: 6_000, holders: [97, 74], fees: [0.48, 0.27], change: [0.118, 0.048], epochs: 5 },
+  { id: "gold-vs-sp-500", a: "GLD", b: "SPY", kind: "RatioOutperform", age: 1, bell: [2026, 11, 31, 21], oddsA: 0.55, implied: 1.004, feeBps: 30, minted: 9_800, depth: 4_800, holders: [58, 44], fees: [0.21, 0.11], change: [0.052, 0.019], epochs: 2 },
+
+  /* Settled */
+  { id: "zcash-vs-hyperliquid", a: "ZEC", b: "HYPE", kind: "RatioOutperform", age: 30, bell: [2026, 8, 15, 0], oddsA: 0.71, implied: 1.002, minted: 41_300, depth: 20_000, holders: [148, 176], fees: [61.7, 44.2], change: [0.284, -0.093], epochs: 90, settled: { winner: "a", redeemed: 0.676 } },
+  { id: "nvidia-vs-microsoft", a: "NVDA", b: "MSFT", kind: "CapCompare", age: 24, bell: [2026, 8, 11, 21], oddsA: 0.84, implied: 1.003, minted: 73_400, depth: 26_000, holders: [288, 231], fees: [9.41, 4.06], change: [-0.031, 0.021], epochs: 70, settled: { winner: "a", redeemed: 0.9 } },
+  { id: "ethereum-vs-solana", a: "ETH", b: "SOL", kind: "RatioOutperform", age: 14, bell: [2026, 8, 1, 0], oddsA: 0.34, implied: 1.004, minted: 58_900, depth: 21_000, holders: [276, 344], fees: [0.94, 14.7], change: [0.087, 0.104], epochs: 42, settled: { winner: "b", redeemed: 0.88 } },
+  { id: "apple-vs-microsoft", a: "AAPL", b: "MSFT", kind: "CapCompare", age: 30, bell: [2026, 8, 18, 21], oddsA: 0.63, implied: 1.005, minted: 97_600, depth: 33_000, holders: [352, 301], fees: [11.7, 6.28], change: [0.062, 0.021], epochs: 88, settled: { winner: "a", redeemed: 0.72 } },
+  { id: "dogecoin-vs-xrp", a: "DOGE", b: "XRP", kind: "RatioOutperform", age: 21, bell: [2026, 8, 20, 0], oddsA: 0.48, implied: 1.009, minted: 24_600, depth: 9_000, holders: [388, 296], fees: [4_210, 271.4], change: [-0.071, 0.052], epochs: 60, settled: { winner: "b", redeemed: 0.41, manual: true } },
+];
+
+/** The A/B price ratio the day the duel opened: today's ratio unwound by each side's move since. */
+function startRatio(a: Asset, b: Asset, s: Seed): number {
+  const f = Math.min(1, s.age / 30);
+  const r = ((a.refPrice / b.refPrice) * (1 + s.change[1] * f)) / (1 + s.change[0] * f);
+  return Number(r.toPrecision(4));
+}
+
 function buildFixtures(now: number): Market[] {
-  const AAPL = getAsset("AAPL");
-  const NVDA = getAsset("NVDA");
-  const BTC = getAsset("BTC");
-  const ETH = getAsset("ETH");
-  const TSLA = getAsset("TSLA");
-  const F = getAsset("F");
-  const ZEC = getAsset("ZEC");
-  const HYPE = getAsset("HYPE");
-
-  const appleNvidia = baseMarket({
-    id: "apple-vs-nvidia",
-    no: 1,
-    question: "Will Apple be worth more than Nvidia on Dec 31?",
-    a: fighter(AAPL, { change30d: 0.062, holders: 412, feesPaid: 31.42 }),
-    b: fighter(NVDA, { change30d: -0.031, holders: 388, feesPaid: 40.18 }),
-    template: {
-      kind: "CapCompare",
-      feedA: AAPL.feedId,
-      feedB: NVDA.feedId,
-      sharesA: AAPL.shares ?? 0,
-      sharesB: NVDA.shares ?? 0,
-    },
-    createdTs: now - 41 * DAY,
-    resolveTs: Date.UTC(2026, 11, 31, 21, 0, 0),
-    feeBpsHolders: 100,
-    status: { kind: "open" },
-    totalMinted: 184_200,
-    totalRedeemed: 0,
-    rewardsPaidA: 31.42,
-    rewardsPaidB: 40.18,
-    epochs: 112,
-    odds: odds(0.54, 1.008),
-    depthUsd: 58_000,
+  const markets = SEEDS.map((s) => {
+    const A = getAsset(s.a);
+    const B = getAsset(s.b);
+    const resolveTs = Date.UTC(s.bell[0], s.bell[1], s.bell[2], s.bell[3], 0, 0);
+    const createdTs = (s.settled ? resolveTs : now) - s.age * DAY;
+    const a = fighter(A, { change30d: s.change[0], holders: s.holders[0], feesPaid: s.fees[0] });
+    const b = fighter(B, { change30d: s.change[1], holders: s.holders[1], feesPaid: s.fees[1] });
+    const template: Template =
+      s.kind === "CapCompare"
+        ? { kind: "CapCompare", feedA: A.feedId, feedB: B.feedId, sharesA: A.shares ?? 0, sharesB: B.shares ?? 0 }
+        : { kind: "RatioOutperform", feedA: A.feedId, feedB: B.feedId, startRatio: startRatio(A, B, s) };
+    const closing = odds(s.oddsA, s.implied ?? 1.006);
+    const status: MarketStatus = s.settled
+      ? {
+          kind: "resolved",
+          winner: s.settled.winner,
+          priceA: a.price,
+          priceB: b.price,
+          // Manual settlements land after the 6h grace period; oracle ones a few minutes after the bell.
+          resolvedTs: resolveTs + (s.settled.manual ? 6 * HOUR + 12 * 60_000 : 4 * 60_000),
+          closingOdds: closing,
+          manual: s.settled.manual ?? false,
+        }
+      : { kind: "open" };
+    return baseMarket({
+      id: s.id,
+      no: 0,
+      question: composeQuestion(s.kind, A, B, resolveTs, 0),
+      a,
+      b,
+      template,
+      createdTs,
+      resolveTs,
+      feeBpsHolders: s.feeBps ?? 100,
+      status,
+      totalMinted: s.minted,
+      totalRedeemed: s.settled ? Math.round(s.minted * s.settled.redeemed) : 0,
+      rewardsPaidA: s.fees[0],
+      rewardsPaidB: s.fees[1],
+      epochs: s.epochs,
+      odds: s.settled ? (s.settled.winner === "a" ? { a: 1, b: 0, impliedSum: 1 } : { a: 0, b: 1, impliedSum: 1 }) : closing,
+      depthUsd: s.depth,
+    });
   });
-
-  const btcEth = baseMarket({
-    id: "bitcoin-vs-ethereum",
-    no: 2,
-    question: "Will Bitcoin outperform Ethereum from here to Nov 30?",
-    a: fighter(BTC, { change30d: 0.041, holders: 296, feesPaid: 0.0412 }),
-    b: fighter(ETH, { change30d: 0.087, holders: 341, feesPaid: 1.218 }),
-    template: { kind: "RatioOutperform", feedA: BTC.feedId, feedB: ETH.feedId, startRatio: 27.76 },
-    createdTs: now - 19 * DAY,
-    resolveTs: Date.UTC(2026, 10, 30, 0, 0, 0),
-    feeBpsHolders: 100,
-    status: { kind: "open" },
-    totalMinted: 96_400,
-    totalRedeemed: 0,
-    rewardsPaidA: 0.0412,
-    rewardsPaidB: 1.218,
-    epochs: 61,
-    odds: odds(0.39, 1.004),
-    depthUsd: 36_000,
+  // Board numbers follow creation order.
+  markets.sort((x, y) => x.createdTs - y.createdTs).forEach((m, i) => {
+    m.no = i + 1;
   });
-
-  const teslaFord = baseMarket({
-    id: "tesla-vs-ford",
-    no: 3,
-    question: "Will Tesla be worth more than Ford on Oct 30?",
-    a: fighter(TSLA, { change30d: 0.118, holders: 203, feesPaid: 4.06 }),
-    b: fighter(F, { change30d: 0.012, holders: 57, feesPaid: 88.5 }),
-    template: {
-      kind: "CapCompare",
-      feedA: TSLA.feedId,
-      feedB: F.feedId,
-      sharesA: TSLA.shares ?? 0,
-      sharesB: F.shares ?? 0,
-    },
-    createdTs: now - 9 * DAY,
-    resolveTs: Date.UTC(2026, 9, 30, 20, 0, 0),
-    feeBpsHolders: 50,
-    status: { kind: "open" },
-    totalMinted: 22_800,
-    totalRedeemed: 0,
-    rewardsPaidA: 4.06,
-    rewardsPaidB: 88.5,
-    epochs: 24,
-    odds: odds(0.91, 1.011),
-    depthUsd: 14_000,
-  });
-
-  const resolvedTs = Date.UTC(2026, 8, 15, 0, 0, 0);
-  const zecHype = baseMarket({
-    id: "zcash-vs-hyperliquid",
-    no: 4,
-    question: "Will Zcash outperform Hyperliquid from here to Sep 15?",
-    a: fighter(ZEC, { change30d: 0.284, holders: 148, feesPaid: 61.7, price: 62.4 }),
-    b: fighter(HYPE, { change30d: -0.093, holders: 176, feesPaid: 44.2, price: 44.1 }),
-    template: { kind: "RatioOutperform", feedA: ZEC.feedId, feedB: HYPE.feedId, startRatio: 1.02 },
-    createdTs: resolvedTs - 30 * DAY,
-    resolveTs: resolvedTs,
-    feeBpsHolders: 100,
-    status: {
-      kind: "resolved",
-      winner: "a",
-      priceA: 62.4,
-      priceB: 44.1,
-      resolvedTs: resolvedTs + 4 * 60_000,
-      closingOdds: odds(0.71, 1.002),
-      manual: false,
-    },
-    totalMinted: 41_300,
-    totalRedeemed: 27_910,
-    rewardsPaidA: 61.7,
-    rewardsPaidB: 44.2,
-    epochs: 90,
-    odds: { a: 1, b: 0, impliedSum: 1 },
-    depthUsd: 20_000,
-  });
-
-  return [appleNvidia, btcEth, teslaFord, zecHype];
+  return markets;
 }
 
 /** 30 daily points ending at the current odds (a bridged random walk). */
@@ -249,19 +265,17 @@ function buildHistory(m: Market, now: number, seed: number): OddsPoint[] {
   }));
 }
 
+/** Up to ten recent payouts per duel, alternating sides, spaced by the duel's own epoch cadence. */
 function buildLedger(markets: Market[], now: number): RewardEpoch[] {
   const rng = mulberry32(0xc0ffee);
   const out: RewardEpoch[] = [];
-  const plan: Array<{ id: string; count: number; every: number; endAt: number }> = [
-    { id: "apple-vs-nvidia", count: 10, every: 6 * HOUR, endAt: now - 26 * 60_000 },
-    { id: "bitcoin-vs-ethereum", count: 6, every: 8 * HOUR, endAt: now - 71 * 60_000 },
-    { id: "tesla-vs-ford", count: 4, every: 12 * HOUR, endAt: now - 3 * HOUR },
-    { id: "zcash-vs-hyperliquid", count: 4, every: 8 * HOUR, endAt: Date.UTC(2026, 8, 14, 20, 0, 0) },
-  ];
-  for (const p of plan) {
-    const m = markets.find((x) => x.id === p.id);
-    if (!m) continue;
-    for (let i = 0; i < p.count; i++) {
+  for (const m of markets) {
+    const count = Math.min(10, m.epochs);
+    if (count === 0) continue;
+    const endAt =
+      m.status.kind === "resolved" ? m.status.resolvedTs - 4 * HOUR : now - (5 + Math.floor(rng() * 170)) * 60_000;
+    const every = Math.max(HOUR, ((endAt - m.createdTs) / m.epochs) * 2);
+    for (let i = 0; i < count; i++) {
       const side: Side = i % 2 === 0 ? "a" : "b";
       const f = side === "a" ? m.a : m.b;
       const perEpoch = f.feesPaid / Math.max(8, m.epochs / 4);
@@ -270,11 +284,7 @@ function buildLedger(markets: Market[], now: number): RewardEpoch[] {
         marketId: m.id,
         epoch: m.epochs - i,
         side,
-        ts:
-          p.endAt -
-          Math.floor(i / 2) * p.every -
-          (side === "b" ? 7 * 60_000 : 0) -
-          Math.floor(rng() * 9) * 60_000,
+        ts: endAt - Math.floor(i / 2) * every - (side === "b" ? 7 * 60_000 : 0) - Math.floor(rng() * 9) * 60_000,
         amountPair: Math.round(amt * 10_000) / 10_000,
         holders: Math.max(3, Math.round(f.holders * (0.82 + rng() * 0.16))),
         signature: fakeSig(),
@@ -373,32 +383,36 @@ export function createDemoData(): DuelData {
 
   const posKey = (id: string, owner: string, side: Side) => `${id}:${owner}:${side}`;
 
-  // The demo corner arrives with a live position and a settled one, so /me has something to show.
+  // The demo corner arrives with a live position and a settled one, so /positions has something to show.
   const seedPositions = () => {
-    const an = markets[0];
-    positions.set(posKey(an.id, DEMO_OWNER, "a"), {
-      marketId: an.id,
-      owner: DEMO_OWNER,
-      side: "a",
-      size: 250,
-      cost: 128.4,
-      value: 250 * an.odds.a,
-      earnedPair: 1.84,
-      claimablePair: 0.0213,
-      redeemableUsdc: 0,
-    });
-    const zh = markets[3];
-    positions.set(posKey(zh.id, DEMO_OWNER, "a"), {
-      marketId: zh.id,
-      owner: DEMO_OWNER,
-      side: "a",
-      size: 120,
-      cost: 78.6,
-      value: 120,
-      earnedPair: 3.412,
-      claimablePair: 0,
-      redeemableUsdc: 120,
-    });
+    const an = markets.find((m) => m.id === "apple-vs-nvidia");
+    if (an) {
+      positions.set(posKey(an.id, DEMO_OWNER, "a"), {
+        marketId: an.id,
+        owner: DEMO_OWNER,
+        side: "a",
+        size: 250,
+        cost: 128.4,
+        value: 250 * an.odds.a,
+        earnedPair: 1.84,
+        claimablePair: 0.0213,
+        redeemableUsdc: 0,
+      });
+    }
+    const zh = markets.find((m) => m.id === "zcash-vs-hyperliquid");
+    if (zh) {
+      positions.set(posKey(zh.id, DEMO_OWNER, "a"), {
+        marketId: zh.id,
+        owner: DEMO_OWNER,
+        side: "a",
+        size: 120,
+        cost: 78.6,
+        value: 120,
+        earnedPair: 3.412,
+        claimablePair: 0,
+        redeemableUsdc: 120,
+      });
+    }
     balances.set(DEMO_OWNER, { usdc: 1_000, pair: { AAPLx: 1.84, ZEC: 3.412 } });
   };
   seedPositions();

@@ -5,7 +5,6 @@ import { Menu, X } from "lucide-react";
 import React from "react";
 import { cn } from "@/lib/utils";
 import { WalletButton } from "./WalletButton";
-import { Wordmark } from "./Wordmark";
 
 const NAV = [
   { href: "/", label: "Home" },
@@ -21,7 +20,7 @@ function isActive(href: string, pathname: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-/** The template's fixed header: wordmark left, nav in the middle, the wallet where "Host an Event" was. */
+/** The template's fixed header: nav in the middle, the wallet where "Host an Event" was. */
 export const HeroHeader = () => {
   const [menuState, setMenuState] = React.useState(false);
   const pathname = usePathname() ?? "/";
@@ -30,11 +29,7 @@ export const HeroHeader = () => {
       <nav data-state={menuState && "active"} className="bg-background/50 fixed z-20 w-full border-b backdrop-blur-3xl">
         <div className="mx-auto max-w-6xl px-6 transition-all duration-300">
           <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
-            <div className="flex w-full items-center justify-between gap-12 lg:w-auto">
-              <Link href="/" aria-label="home" className="flex items-center" onClick={() => setMenuState(false)}>
-                <Wordmark iconOnly className="[&_svg]:h-5" />
-              </Link>
-
+            <div className="flex w-full items-center justify-end lg:w-auto">
               <button
                 onClick={() => setMenuState(!menuState)}
                 aria-label={menuState ? "Close Menu" : "Open Menu"}
