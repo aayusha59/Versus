@@ -1,0 +1,55 @@
+# Deploys every push to Vercel through the Vercel CLI with one shared token,
+# so any collaborator's commit deploys, not only the Vercel project owner's.
+# main -> production; every other branch -> a preview deployment.
+#
+# Secrets (repo Settings -> Secrets and variables -> Actions):
+# VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID. Setup is in README.md under "Deploy".
+name: Deploy
+
+on:
+  push:
+    branches: ["**"]
+
+permissions:
+  contents: read
+
+# A newer push to the same branch cancels the deploy still running for the older one.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  TARGET: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+  PROD_FLAG: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      # Fetches the project settings (root directory, framework) and this target's
+      # env vars into .vercel/, so nothing has to be duplicated in GitHub.
+      - name: Pull Vercel project settings
+        run: vercel pull --yes --environment=$TARGET --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build
+        run: vercel build --yes $PROD_FLAG --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy
+        run: |
+          url=$(vercel deploy --prebuilt --yes $PROD_FLAG --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "**$TARGET** deploy of \`${{ github.ref_name }}\`: $url" >> "$GITHUB_STEP_SUMMARY"
