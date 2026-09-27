@@ -36,7 +36,7 @@ export interface CreateMarketParams {
   collateralMint: PublicKey;
   pairAMint: PublicKey;
   pairBMint: PublicKey;
-  template: Template;
+  templatte: Template;
   /** Unix seconds. */
   resolveTs: number;
   graceSecs: number;
