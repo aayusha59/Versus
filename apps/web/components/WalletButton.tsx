@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletReadyState } from "@solana/wallet-adapter-base";
+import { X } from "lucide-react";
 import { useOwner } from "@/lib/owner";
 import { shortKey } from "@/lib/format";
 import { cx } from "@/lib/cx";
@@ -26,16 +27,72 @@ function describe(e: unknown, name: string): string {
 }
 
 interface WalletButtonProps {
-  variant?: "primary" | "outline" | "ghost";
+  variant?: "primary" | "outline" | "ghost" | "text";
   size?: "sm" | "md" | "lg";
   block?: boolean;
   className?: string;
 }
 
+/** The wallet's own logo from its adapter; a monogram tile stands in when no adapter is registered. */
+function Icon({ src, name }: { src?: string; name: string }) {
+  if (!src) {
+    return (
+      <span className="wallet-icon wallet-icon-mono" aria-hidden="true">
+        {name[0]}
+      </span>
+    );
+  }
+  return (
+    <span className="wallet-icon">
+      {/* Adapter icons are data URIs, so next/image would only add a hop. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={src} alt="" />
+    </span>
+  );
+}
+
+interface RowProps {
+  icon?: string;
+  name: string;
+  status: ReactNode;
+  /** "ready" prints the status in green; "off" dims a wallet that is not installed. */
+  tone?: "ready" | "off";
+  busy?: boolean;
+  /** For a wallet that is not installed: the row opens its download page instead of connecting. */
+  href?: string;
+  onClick?: () => void;
+}
+
+function Row({ icon, name, status, tone, busy, href, onClick }: RowProps) {
+  const body = (
+    <>
+      <Icon src={icon} name={name} />
+      <span className="wallet-name">{name}</span>
+      <span className={cx("wallet-status", tone === "ready" && !busy && "is-ready", busy && "pulse")}>
+        {status}
+      </span>
+    </>
+  );
+  const className = cx("wallet-row", tone === "off" && "is-off");
+  if (href) {
+    return (
+      <a href={href} target="_blank" rel="noreferrer" className={className}>
+        {body}
+      </a>
+    );
+  }
+  return (
+    <button type="button" className={className} onClick={onClick} disabled={busy}>
+      {body}
+    </button>
+  );
+}
+
 /**
  * Our own wallet button and picker. Behaviour from wallet-adapter and Radix Dialog; the
- * picker lists Phantom, Solflare and Backpack as hairline rows, plus the burner test wallet
- * on localnet/devnet and the demo corner when the app runs on fixtures.
+ * picker is a centred sheet with one tall row per wallet (logo, name, state): Phantom,
+ * Solflare and Backpack first, then the burner test wallet on localnet/devnet and the demo
+ * wallet when the app runs on fixtures.
  */
 export function WalletButton({ variant = "outline", size = "md", block, className }: WalletButtonProps) {
   const { wallets, select, connect, wallet, publicKey, connecting } = useWallet();
@@ -65,10 +122,12 @@ export function WalletButton({ variant = "outline", size = "md", block, classNam
     if (publicKey) setOpen(false);
   }, [publicKey]);
 
+  const adapter = (name: string) => wallets.find((x) => x.adapter.name === name)?.adapter;
+
   const ready = (name: string) => {
-    const w = wallets.find((x) => x.adapter.name === name);
-    if (!w) return null;
-    return w.readyState === WalletReadyState.Installed || w.readyState === WalletReadyState.Loadable;
+    const a = adapter(name);
+    if (!a) return null;
+    return a.readyState === WalletReadyState.Installed || a.readyState === WalletReadyState.Loadable;
   };
 
   const pick = (name: string) => {
@@ -92,7 +151,8 @@ export function WalletButton({ variant = "outline", size = "md", block, classNam
       }}
     >
       <Dialog.Trigger asChild>
-        <Button variant={owner ? "outline" : variant} size={size} block={block} className={className}>
+        {/* Plain text stays plain once connected; every other variant turns into an outline. */}
+        <Button variant={owner && variant !== "text" ? "outline" : variant} size={size} block={block} className={className}>
           {owner ? <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-side-a" /> : null}
           <span className={cx(owner && "font-mono")}>{label}</span>
         </Button>
@@ -100,114 +160,96 @@ export function WalletButton({ variant = "outline", size = "md", block, classNam
       <Dialog.Portal>
         <Dialog.Overlay className="overlay" />
         <Dialog.Content className="sheet" aria-describedby={undefined}>
+          <Dialog.Close className="sheet-close" aria-label="Close">
+            <X size={18} aria-hidden="true" />
+          </Dialog.Close>
           {owner ? (
             <>
-              <div className="flex items-baseline justify-between gap-4">
-                <Dialog.Title className="text-lg font-semibold">Your wallet</Dialog.Title>
-                <Dialog.Close className="btn btn-ghost btn-sm -mr-3">Close</Dialog.Close>
+              <div className="sheet-head">
+                <Dialog.Title className="sheet-title">Your wallet</Dialog.Title>
               </div>
-              <hr className="double mt-4" />
-              <dl className="dl mt-4">
-                <dt>Wallet</dt>
-                <dd>{source === "demo" ? "Demo wallet (no extension)" : walletName}</dd>
-                <dt>Address</dt>
-                <dd className="break-all text-sm">{owner}</dd>
-              </dl>
-              <div className="mt-6">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    void disconnect();
-                    setOpen(false);
-                  }}
-                >
-                  Disconnect
-                </Button>
+              <div className="sheet-body">
+                <dl className="dl">
+                  <dt>Wallet</dt>
+                  <dd>{source === "demo" ? "Demo wallet (no extension)" : walletName}</dd>
+                  <dt>Address</dt>
+                  <dd className="break-all text-sm">{owner}</dd>
+                </dl>
+                <div className="mt-6">
+                  <Button
+                    variant="outline"
+                    block
+                    onClick={() => {
+                      void disconnect();
+                      setOpen(false);
+                    }}
+                  >
+                    Disconnect
+                  </Button>
+                </div>
               </div>
             </>
           ) : (
             <>
-              <div className="flex items-baseline justify-between gap-4">
-                <Dialog.Title className="text-lg font-semibold">Connect a wallet</Dialog.Title>
-                <Dialog.Close className="btn btn-ghost btn-sm -mr-3">Close</Dialog.Close>
+              <div className="sheet-head">
+                <Dialog.Title className="sheet-title">Connect a wallet</Dialog.Title>
               </div>
-              <Dialog.Description className="text-sm text-ink-2 mt-1">
-                One signature per bet. Payouts land in the same wallet.
-              </Dialog.Description>
-              <hr className="double mt-4" />
-              <ul className="hairline-rows">
+              <ul className="wallet-list">
                 {KNOWN.map((k) => {
-                  const r = ready(k.name);
                   const busy = pending === k.name || (connecting && wallet?.adapter.name === k.name);
                   return (
                     <li key={k.name}>
-                      {r ? (
-                        <button
-                          type="button"
-                          className="row-hover flex w-full items-baseline justify-between gap-4 py-3.5 text-left"
+                      {ready(k.name) ? (
+                        <Row
+                          icon={adapter(k.name)?.icon}
+                          name={k.name}
+                          tone="ready"
+                          busy={busy}
+                          status={busy ? "Waiting for approval" : "Detected"}
                           onClick={() => pick(k.name)}
-                          disabled={busy}
-                        >
-                          <span className="font-semibold">{k.name}</span>
-                          <span className={cx("text-xs", busy ? "text-ink-2 pulse" : "text-gain")}>
-                            {busy ? "Waiting for approval" : "Detected"}
-                          </span>
-                        </button>
+                        />
                       ) : (
-                        <a
-                          href={k.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="row-hover flex w-full items-baseline justify-between gap-4 py-3.5"
-                        >
-                          <span className="font-semibold text-ink-2">{k.name}</span>
-                          <span className="text-xs text-ink-2">Not installed. Get it</span>
-                        </a>
+                        <Row icon={adapter(k.name)?.icon} name={k.name} tone="off" status="Not installed" href={k.url} />
                       )}
                     </li>
                   );
                 })}
               </ul>
-              {burnerAvailable ? (
+              {burnerAvailable || demoAvailable ? (
                 <>
-                  <hr className="rule-ink" />
-                  <button
-                    type="button"
-                    className="row-hover flex w-full items-baseline justify-between gap-4 py-3.5 text-left"
-                    onClick={() => pick(BURNER_WALLET_NAME)}
-                    disabled={burnerBusy}
-                  >
-                    <span className="font-semibold whitespace-nowrap">Burner (test wallet)</span>
-                    <span className={cx("text-xs text-ink-2 text-right", burnerBusy && "pulse")}>
-                      {burnerBusy ? "Loading the key." : "Keys live in this browser. Test funds only."}
-                    </span>
-                  </button>
+                  <hr className="wallet-split" />
+                  <ul className="wallet-list">
+                    {burnerAvailable ? (
+                      <li>
+                        <Row
+                          icon={adapter(BURNER_WALLET_NAME)?.icon}
+                          name="Burner"
+                          busy={burnerBusy}
+                          status={burnerBusy ? "Loading the key" : "Test keys in this browser"}
+                          onClick={() => pick(BURNER_WALLET_NAME)}
+                        />
+                      </li>
+                    ) : null}
+                    {demoAvailable ? (
+                      <li>
+                        <Row
+                          name="Demo wallet"
+                          status="1,000 mock USDC"
+                          onClick={() => {
+                            connectDemo();
+                            setOpen(false);
+                          }}
+                        />
+                      </li>
+                    ) : null}
+                  </ul>
                 </>
               ) : null}
-              {demoAvailable ? (
-                <>
-                  <hr className="rule-ink" />
-                  <button
-                    type="button"
-                    className="row-hover flex w-full items-baseline justify-between gap-4 py-3.5 text-left"
-                    onClick={() => {
-                      connectDemo();
-                      setOpen(false);
-                    }}
-                  >
-                    <span className="font-semibold">Demo wallet</span>
-                    <span className="text-xs text-ink-2">1,000 mock USDC, no extension</span>
-                  </button>
-                </>
-              ) : null}
-              <hr className="rule" />
               {error ? (
-                <p className="field-error mt-3" role="alert">
+                <p className="sheet-foot field-error" role="alert">
                   {error}
                 </p>
-              ) : (
-                <p className="text-xs text-ink-2 mt-3">Phantom, Solflare and Backpack on Solana.</p>
-              )}
+              ) : null}
             </>
           )}
         </Dialog.Content>

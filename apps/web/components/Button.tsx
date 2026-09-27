@@ -3,7 +3,7 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { cx } from "@/lib/cx";
 import type { Side } from "@/lib/types";
 
-type Variant = "primary" | "outline" | "ghost" | "bracket";
+type Variant = "primary" | "outline" | "ghost" | "bracket" | "text";
 type Size = "sm" | "md" | "lg";
 
 interface BaseProps {
