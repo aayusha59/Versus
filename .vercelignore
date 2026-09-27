@@ -1,0 +1,11 @@
+node_modules
+**/node_modules
+**/.next
+.env
+**/.env
+**/.env.local
+**/.keys
+programs/duel/target
+programs/duel/.anchor
+**/test-ledger
+*.log

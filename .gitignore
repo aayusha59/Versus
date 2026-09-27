@@ -12,3 +12,5 @@ test-ledger/
 .pnpm-store/
 .keys/
 *.tsbuildinfo
+
+.vercel
