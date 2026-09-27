@@ -4,7 +4,7 @@
   "programId": "AN2TEyFH3zCsv5MENn2uo9LJx69J2EUC8iScAVeDbW25",
   "operator": "GtQ8ZPUWHkbU4s2oRGNPmLh8ZX2wEfovCvHAp1d4Bigj",
   "createdAt": "2026-09-26T00:00:00.000Z",
-  "updatedAt": "2026-09-27T04:21:01.823Z",
+  "updatedAt": "2026-09-27T04:36:14.729Z",
   "note": "Placeholder so the web app can import it statically. `RPC_URL=https://api.devnet.solana.com pnpm --filter scripts bootstrap` overwrites it once the program is deployed and the operator is funded.",
   "poolConfig": {
     "feeBps": 100,
@@ -248,6 +248,49 @@
         "sharesB": "3900000000"
       },
       "resolveTs": 1798750800,
+      "graceSecs": 86400
+    },
+    {
+      "address": "3WP8p2DwWyygYUN5XP8xEUz5wn6UoTyehMRreqZYbWJz",
+      "nonce": "99",
+      "creator": "GtQ8ZPUWHkbU4s2oRGNPmLh8ZX2wEfovCvHAp1d4Bigj",
+      "question": "(test) Was Apple worth more than Nvidia yesterday?",
+      "sideALabel": "Apple",
+      "sideBLabel": "Nvidia",
+      "pairA": "AAPL",
+      "pairB": "NVDA",
+      "collateralMint": "34HSEx1LsWo5SURHsVTwCdTqYTnYypoedFFLzPbam9ez",
+      "yesMint": "Ft1qX4yPu36HYwY7C7kLqvT96nJyNT2fWKgMFekYKwpo",
+      "noMint": "HmEv2kAhUM9McG7P2nYntfPXZ83x9TWEEtypq7dzwYYx",
+      "poolA": {
+        "pool": "6PFPVjkhDGdoN4Rj28W8d4x31XTRkBB5g4ijWsBT2fDt",
+        "position": "4hHwjVbMB6SZ4YenJgGGkZ7AhtbREWqF7HAmcgY4QLCg",
+        "positionNft": "7RYbtX4mToi47BvBYY3xDwwMu9FpDDZ6V9XryTbDNSv5",
+        "positionNftAccount": "GPzE3K6CtSc2NMSmuY8bA8s2tPbTEyRjSq3yi9kSXTZN",
+        "tokenAMint": "Ft1qX4yPu36HYwY7C7kLqvT96nJyNT2fWKgMFekYKwpo",
+        "tokenBMint": "C9oHPeTZfKQ9D71uDxtCaKtAGGzngKts6oSEzhb71qNc",
+        "tokenAVault": "6iDrVDqtaTgdrRGKyQdnQxnJE1LsgnXFkHZDtcZmnbuC",
+        "tokenBVault": "CogqD8wSCXAzqtnNhmNXno6NXaNpBzCHeMEYG8cEdLcz"
+      },
+      "poolB": {
+        "pool": "7RZztzcWQTkvrKBShaJtsYepwZLdxRY5BkpTPw6NNMgn",
+        "position": "AUg23jPkucaqoFEpsbZkCpu4XQzCBPDLy4Gjdn55TbjZ",
+        "positionNft": "9iVFhDvSiEK7uHHMG1s6W6wwYsdotLWkk4tKZJrGe8bk",
+        "positionNftAccount": "9rTQnVxrsQkTAmRYXcwPkuvWARDooLUSB37G88U8YvxR",
+        "tokenAMint": "HmEv2kAhUM9McG7P2nYntfPXZ83x9TWEEtypq7dzwYYx",
+        "tokenBMint": "9WFdyTMbo2299xZUea5TpnxLEBQuHnvYYurWabtF377Y",
+        "tokenAVault": "9vPK7hXFCndtezjBkGY2FrBssSAMpXn5rf7Z8fgSNUhb",
+        "tokenBVault": "5GsbN7834PRtxGwL4xFL6J9fRF7eLtwbDLzzS4R3LXTK"
+      },
+      "poolsSet": true,
+      "template": {
+        "kind": "capCompare",
+        "feedA": "49f6b65cb1de6b10eaf75e7c03ca029c306d0357e91b5311b175084a5ad55688",
+        "feedB": "b1073854ed24cbc755dc527418f52b7d271f6cc967bbf8d8129112b18860a593",
+        "sharesA": "14800000000",
+        "sharesB": "24400000000"
+      },
+      "resolveTs": 1790310965,
       "graceSecs": 86400
     }
   ]
