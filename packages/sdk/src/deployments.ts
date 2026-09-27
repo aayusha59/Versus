@@ -1,4 +1,4 @@
-import type { Cluster, DeployedMarket, Deployment } from "./types.js";
+import type { Cluster, DeployedMarket, Deployment, Template, TemplateJson } from "./types.js";
 
 /**
  * Deployment files live in `packages/sdk/deployments/<cluster>.json` and are written by
@@ -48,6 +48,18 @@ export function parseDeployment(raw: unknown): Deployment {
   }
   if (!Array.isArray(d.markets)) throw new Error("deployment: markets must be an array");
   return d as Deployment;
+}
+
+/** A resolution template as stored in a deployment file (bigints as decimal strings). */
+export function templateToJson(t: Template): TemplateJson {
+  switch (t.kind) {
+    case "capCompare":
+      return { kind: t.kind, feedA: t.feedA, feedB: t.feedB, sharesA: t.sharesA.toString(), sharesB: t.sharesB.toString() };
+    case "ratioOutperform":
+      return { kind: t.kind, feedA: t.feedA, feedB: t.feedB, startRatioE9: t.startRatioE9.toString() };
+    case "priceAbove":
+      return { kind: t.kind, feed: t.feed, thresholdE6: t.thresholdE6.toString() };
+  }
 }
 
 /** Find a market by address, or by case-insensitive label match ("apple", "Apple vs Nvidia"). */

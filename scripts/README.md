@@ -69,6 +69,10 @@ them into the market's reward vault, snapshot outcome-token holders, `distribute
 chunks of 12, print a ledger line per epoch. The pool vault, the market and (by default) the
 operator are excluded from the snapshot.
 
+Each loop cranks every on-chain market whose `crank` is this key, not only the deployment file's:
+duels created in the web app name the platform key as crank and resolver and hand it both LP
+position NFTs in their last transaction. `--market` accepts an address or a label.
+
 ```
 pnpm --filter scripts crank -- --once
 pnpm --filter scripts crank -- --interval 300 [--market "Apple"] [--min-usd 0.01] [--include-operator] [--dry-run]

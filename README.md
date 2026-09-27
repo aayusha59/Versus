@@ -62,7 +62,7 @@ RPC_URL=https://api.devnet.solana.com pnpm --filter scripts bootstrap
 
 ## Known limits
 
-- The operator wallet owns the Meteora LP positions and claims their fees.
+- The operator wallet owns the Meteora LP positions and claims their fees; duels created in the web app hand their positions to it.
 - Rewards accounting is off-chain; the payout is on-chain through `distribute`, which checks the crank key and the vault balance.
 - `resolve_manual` by the resolver after `resolve_ts + grace_secs` is the fallback for stale feeds.
 - Hermes now requires an API key, so `resolve --manual` is the demo path; plain `resolve` needs `PYTH_API_KEY`.

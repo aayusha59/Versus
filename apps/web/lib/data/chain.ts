@@ -1,6 +1,14 @@
 import "../polyfills";
 import { ComputeBudgetProgram, Connection, PublicKey, Transaction, type Signer } from "@solana/web3.js";
-import { AccountLayout, MintLayout, TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync } from "@solana/spl-token";
+import {
+  AccountLayout,
+  MintLayout,
+  TOKEN_2022_PROGRAM_ID,
+  TOKEN_PROGRAM_ID,
+  createAssociatedTokenAccountIdempotentInstruction,
+  createTransferCheckedInstruction,
+  getAssociatedTokenAddressSync,
+} from "@solana/spl-token";
 import {
   DuelClient,
   buildBetTx,
@@ -993,6 +1001,9 @@ export function createChainData(cluster: ChainCluster): DuelData {
       const labelB = params.b.label;
       const symA = assetFor(params.a.symbol)?.pairSymbol ?? `${params.a.symbol}x`;
       const symB = assetFor(params.b.symbol)?.pairSymbol ?? `${params.b.symbol}x`;
+      // The platform crank (scripts/src/crank.ts) pays rewards and runs the manual-resolve fallback,
+      // so it is the market's crank and resolver and takes both LP positions to claim their fees.
+      const platform = operator ?? w.publicKey;
 
       try {
         // Live pair prices from the USDC pools: the outcome pools open at exactly 50/50 against them.
@@ -1037,8 +1048,8 @@ export function createChainData(cluster: ChainCluster): DuelData {
           template,
           resolveTs: Math.floor(params.resolveTs / 1000),
           graceSecs: GRACE_SECS,
-          resolver: w.publicKey,
-          crank: w.publicKey,
+          resolver: platform,
+          crank: platform,
           feeBpsHolders: 10_000,
           feeBpsCreator: 0,
           feeBpsPlatform: 0,
@@ -1088,9 +1099,20 @@ export function createChainData(cluster: ChainCluster): DuelData {
         });
         await sendAndConfirm(poolBx.tx, w, poolBx.signers);
 
-        // 6. set_pools
-        progress("6 of 6. Linking both pools to the market.");
-        const signature = await sendAndConfirm(new Transaction().add(await client.setPoolsIx(created.market, poolAx.pool, poolBx.pool, w.publicKey)), w);
+        // 6. set_pools, and hand both position NFTs to the platform crank
+        progress("6 of 6. Linking both pools to the market and handing their fees to the crank.");
+        const link = new Transaction().add(await client.setPoolsIx(created.market, poolAx.pool, poolBx.pool, w.publicKey));
+        if (!platform.equals(w.publicKey)) {
+          for (const p of [poolAx, poolBx]) {
+            const nft = p.positionNft.publicKey;
+            const to = getAssociatedTokenAddressSync(nft, platform, true, TOKEN_2022_PROGRAM_ID);
+            link.add(
+              createAssociatedTokenAccountIdempotentInstruction(w.publicKey, to, platform, nft, TOKEN_2022_PROGRAM_ID),
+              createTransferCheckedInstruction(p.positionNftAccount, nft, to, w.publicKey, 1, 0, [], TOKEN_2022_PROGRAM_ID),
+            );
+          }
+        }
+        const signature = await sendAndConfirm(link, w);
 
         const id = created.market.toBase58();
         writeJson(key(`seen:${id}`), Date.now());
