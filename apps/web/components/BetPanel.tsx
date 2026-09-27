@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import * as Tabs from "@radix-ui/react-tabs";
 import type { Market, Side } from "@/lib/types";
@@ -45,7 +46,7 @@ export function BetPanel({ market }: { market: Market }) {
   const [raw, setRaw] = useState("");
   const [status, setStatus] = useState<Status>(IDLE);
   const [faucetStatus, setFaucetStatus] = useState<Status>(IDLE);
-  const [disclosed, setDisclosed] = useStoredFlag("duel:disclosed");
+  const [disclosed, setDisclosed] = useStoredFlag("duel:disclosed:v2");
   const [ack, setAck] = useState(false);
 
   const value = Number.parseFloat(raw);
@@ -114,7 +115,7 @@ export function BetPanel({ market }: { market: Market }) {
 
   const tapFaucet = async () => {
     if (!owner) return;
-    setFaucetStatus({ state: "pending", text: "Minting 1,000 mock USDC." });
+    setFaucetStatus({ state: "pending", text: "Sending 1,000 mock USDC." });
     try {
       const r = await faucet.mutateAsync({ owner });
       setFaucetStatus({ state: "ok", text: "1,000 USDC landed.", sig: r.signature });
@@ -284,7 +285,13 @@ export function BetPanel({ market }: { market: Market }) {
             <label className="flex items-start gap-2.5 text-xs text-ink-2 cursor-pointer">
               <input type="checkbox" className="check" checked={ack} onChange={(e) => setAck(e.target.checked)} />
               <span>
-                I am not in a restricted jurisdiction, and I understand outcome tokens can go to zero. Shown once.
+                I am not in the United States or another restricted jurisdiction. I understand the losing side goes to
+                zero, stock payouts are other traders&apos; fees and not yield, xStocks can be paused or seized by their
+                issuer, and none of this is investment advice.{" "}
+                <Link href="/how-it-works#risks" className="link">
+                  Read the risks
+                </Link>
+                . Shown once.
               </span>
             </label>
           ) : null}
@@ -317,6 +324,12 @@ export function BetPanel({ market }: { market: Market }) {
 
       <p className={cx("text-xs text-ink-2", owner && "-mt-2")}>
         Routed USDC to {fighter.pairSymbol} to {sideName} in one signature. Fee {bpsPct(market.feeBpsHolders)} to holders.
+      </p>
+      <p className="text-xs text-ink-2 -mt-3">
+        Not available in the US. Not investment advice.{" "}
+        <Link href="/how-it-works#risks" className="link">
+          Risks
+        </Link>
       </p>
     </form>
   );

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Faq } from "@/components/Faq";
+import { Risks } from "@/components/Risks";
 import { STEPS } from "@/lib/steps";
 
 export const metadata = { title: "How it works" };
@@ -59,6 +60,11 @@ export default function HowItWorksPage() {
           One small Anchor program plus Meteora DAMM v2, Pyth and xStocks. Fees are collected in the stock token
           only, so the payout is never a promise, it is the fee itself.
         </p>
+      </section>
+
+      <section id="risks" className="mt-24 max-w-3xl scroll-mt-24">
+        <h2 className="text-3xl font-semibold">Risks</h2>
+        <Risks className="mt-6" />
       </section>
 
       <section className="mt-24 max-w-3xl">
