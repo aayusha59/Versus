@@ -25,8 +25,10 @@ import { configuredCluster, getDeployment, rpcUrlFor } from "@/lib/data/deployme
  * it is empty, because public airdrops are rate limited). Refuses unless the configured
  * deployment is localnet or devnet: there is no mock USDC on mainnet.
  *
- * Server env: FAUCET_KEYPAIR_PATH (JSON byte array; default ../../scripts/.keys/id.json from
- * apps/web, i.e. the key `scripts/bootstrap` generated), NEXT_PUBLIC_DEPLOYMENT, NEXT_PUBLIC_RPC_URL.
+ * Server env: FAUCET_KEYPAIR (the JSON byte array itself, for hosts without a key file) or
+ * FAUCET_KEYPAIR_PATH (JSON byte array; default ../../scripts/.keys/id.json from
+ * apps/web, i.e. the key `scripts/bootstrap` generated), NEXT_PUBLIC_DEPLOYMENT, NEXT_PUBLIC_RPC_URL,
+ * FAUCET_RPC_URL (optional server-only RPC, e.g. a keyed provider the browser should not see).
  */
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -40,6 +42,8 @@ function keypairPath(): string {
 }
 
 function loadOperator(): Keypair {
+  const inline = process.env.FAUCET_KEYPAIR?.trim();
+  if (inline) return Keypair.fromSecretKey(Uint8Array.from(JSON.parse(inline) as number[]));
   const p = keypairPath();
   if (!fs.existsSync(p)) throw new Error(`Faucet key not found at ${p}. Run the bootstrap first or set FAUCET_KEYPAIR_PATH.`);
   return Keypair.fromSecretKey(Uint8Array.from(JSON.parse(fs.readFileSync(p, "utf8")) as number[]));
@@ -70,7 +74,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });
   }
 
-  const connection = new Connection(rpcUrlFor(cluster), "confirmed");
+  const connection = new Connection(process.env.FAUCET_RPC_URL?.trim() || rpcUrlFor(cluster), "confirmed");
   let airdrop: string | null = null;
   try {
     if (dep.cluster === "localnet") {

@@ -2,12 +2,253 @@
   "cluster": "devnet",
   "rpcUrl": "https://api.devnet.solana.com",
   "programId": "AN2TEyFH3zCsv5MENn2uo9LJx69J2EUC8iScAVeDbW25",
-  "operator": "",
+  "operator": "GtQ8ZPUWHkbU4s2oRGNPmLh8ZX2wEfovCvHAp1d4Bigj",
   "createdAt": "2026-09-26T00:00:00.000Z",
-  "updatedAt": "2026-09-26T00:00:00.000Z",
+  "updatedAt": "2026-09-27T04:21:01.823Z",
   "note": "Placeholder so the web app can import it statically. `RPC_URL=https://api.devnet.solana.com pnpm --filter scripts bootstrap` overwrites it once the program is deployed and the operator is funded.",
-  "poolConfig": { "feeBps": 100, "collectFeeMode": 1 },
-  "mints": {},
-  "pairPools": {},
-  "markets": []
+  "poolConfig": {
+    "feeBps": 100,
+    "collectFeeMode": 1
+  },
+  "mints": {
+    "USDC": {
+      "symbol": "USDC",
+      "mint": "34HSEx1LsWo5SURHsVTwCdTqYTnYypoedFFLzPbam9ez",
+      "decimals": 6
+    },
+    "AAPL": {
+      "symbol": "AAPL",
+      "mint": "C9oHPeTZfKQ9D71uDxtCaKtAGGzngKts6oSEzhb71qNc",
+      "decimals": 6
+    },
+    "NVDA": {
+      "symbol": "NVDA",
+      "mint": "9WFdyTMbo2299xZUea5TpnxLEBQuHnvYYurWabtF377Y",
+      "decimals": 6
+    },
+    "TSLA": {
+      "symbol": "TSLA",
+      "mint": "3jyNvdiW31i9D6jHzb8YPeSp6qTCixEhwxJ8ghq8e2Ej",
+      "decimals": 6
+    },
+    "F": {
+      "symbol": "F",
+      "mint": "4A72p8147nw6FpboZSmbT4hnG8tJJ67g4eFAfJUQL97o",
+      "decimals": 6
+    },
+    "BTC": {
+      "symbol": "BTC",
+      "mint": "6JVAvAZjxJbZNaf46qRfmdACLZZSsDf3o9VYDppyYD3s",
+      "decimals": 6
+    },
+    "ETH": {
+      "symbol": "ETH",
+      "mint": "54VQffs9PEKHA3GHriHzaozHVjofNDqgod2xqHQH42VQ",
+      "decimals": 6
+    }
+  },
+  "pairPools": {
+    "AAPL": {
+      "symbol": "AAPL",
+      "seedPriceUsd": 340.35,
+      "pool": "4Uvi7VikWn31KPM1vdiJVo8eeYPWDubjaQVxScytimvJ",
+      "position": "EwZuhx7LdB23oDjCxLHQ7j3rxvSG3ynp2CE7dkG5RPWq",
+      "positionNft": "ELTm1gqLnfekmxPYmjUJmg3xDScb7idyekSE8kZgAfYo",
+      "positionNftAccount": "6zFWRqmqrebykc357Kb8yGkCrJt4mcMTUgrf6EZxWxCC",
+      "tokenAMint": "C9oHPeTZfKQ9D71uDxtCaKtAGGzngKts6oSEzhb71qNc",
+      "tokenBMint": "34HSEx1LsWo5SURHsVTwCdTqYTnYypoedFFLzPbam9ez",
+      "tokenAVault": "53Qr3H8zXrC9mUrJ3ShpCFtNVXMAFEFWWhfLHt531CXe",
+      "tokenBVault": "4Z785rs8aqRJHGzdzXQGXgd5t6tMBnbDJu51UoWa5LgG"
+    },
+    "NVDA": {
+      "symbol": "NVDA",
+      "seedPriceUsd": 223.96,
+      "pool": "AvuChhBTJHfNptnd5MHNypoubkC27s7jQYpvhA3UXeYs",
+      "position": "E91jZTbBzcyUxeTAmWR5BV9qtbSZBksJKn9behatKVh3",
+      "positionNft": "FNP3hn1a7HRpkPW55bTbHLikduvq84HGcMQopuby2db4",
+      "positionNftAccount": "B2YJUaxtSfVdu9wNWNNFPd71VoVhDoavSKas9dH5CbB3",
+      "tokenAMint": "9WFdyTMbo2299xZUea5TpnxLEBQuHnvYYurWabtF377Y",
+      "tokenBMint": "34HSEx1LsWo5SURHsVTwCdTqYTnYypoedFFLzPbam9ez",
+      "tokenAVault": "G86cJGarg5ABuf7JSqqVxAQVegFjQ38g97tUPwQJn72y",
+      "tokenBVault": "BLxTYRHovqq8WezrwVJWtrsZrP6zebpGCAxUUSjGW6vP"
+    },
+    "TSLA": {
+      "symbol": "TSLA",
+      "seedPriceUsd": 250,
+      "pool": "CrjYADDkzExJB6UPdYpufZfmZYxZrg1UPjfGG9gGaSic",
+      "position": "3TbzwQP2snnSJKSu912WZDndfrZsu9TPFG2E6kdoGw8e",
+      "positionNft": "4PJfxmAvk2yFT6yPiNbHbdo7G32PrdFoTh6JrAa1TUJk",
+      "positionNftAccount": "Git3sXQv17FuMP7XLLawGSPwnzFTZ6Pt8UEgxEgY4uq",
+      "tokenAMint": "3jyNvdiW31i9D6jHzb8YPeSp6qTCixEhwxJ8ghq8e2Ej",
+      "tokenBMint": "34HSEx1LsWo5SURHsVTwCdTqYTnYypoedFFLzPbam9ez",
+      "tokenAVault": "EvtGwnb71tDWszWMV43j23y7CxNpHQHaKkV33xdqKCj8",
+      "tokenBVault": "3Ue5MHiyP5jProukUcWkRPcBVBuveKu5AYk5KXx2LSDy"
+    },
+    "F": {
+      "symbol": "F",
+      "seedPriceUsd": 11,
+      "pool": "8JApUpfq3M5z1dJf1UPZK7Y34zMGifBp6kFswJw4WRZh",
+      "position": "DoaZzcrn73p13JnV7brFF1i1Bd11L48iB7dj6mPxE6au",
+      "positionNft": "44EdJ4qoJDAj3HHhgdpacDKqoNMh8k8wKP2YBqeHbR14",
+      "positionNftAccount": "8KwUD8jgYMV35exKw2MnFTKoXxfiQFEFaLcVfRyBZbWp",
+      "tokenAMint": "4A72p8147nw6FpboZSmbT4hnG8tJJ67g4eFAfJUQL97o",
+      "tokenBMint": "34HSEx1LsWo5SURHsVTwCdTqYTnYypoedFFLzPbam9ez",
+      "tokenAVault": "8F6ddcQraKH1QYU9Zb994wnw9J2mW5yFZDtjM3RuGwat",
+      "tokenBVault": "2PsFGqtVmajTANB26QmeQhEy72SRh3CjLJSHHMNavhrS"
+    },
+    "BTC": {
+      "symbol": "BTC",
+      "seedPriceUsd": 65000,
+      "pool": "CLWweLQD9PvuR1ZfreDGp6zt4ZSK2ShYRPeoX56oZtAU",
+      "position": "EotEuGyNH8hxPKX4ViVZBHQ4mnDVQkGyCqxc6L7t12W2",
+      "positionNft": "7QMCxpQUW6SkiQQBsgdbRdcQUpEJt87CyKeLiQUWULTq",
+      "positionNftAccount": "3dfLVLLonFhAUaqsudLbhnJ6dKQnSQZFMDNwqqgne2u8",
+      "tokenAMint": "6JVAvAZjxJbZNaf46qRfmdACLZZSsDf3o9VYDppyYD3s",
+      "tokenBMint": "34HSEx1LsWo5SURHsVTwCdTqYTnYypoedFFLzPbam9ez",
+      "tokenAVault": "9VWWzq9CK9dwAK3xum5n4xC9maagxEoZEbpttxS73nTm",
+      "tokenBVault": "Fex8PCBZ6USqnqpMu4qkHY8hBYC3im7mDc6SksV9Te7M"
+    },
+    "ETH": {
+      "symbol": "ETH",
+      "seedPriceUsd": 2400,
+      "pool": "Apgd6ugrs8NoLrFTLuZNqHoSuTGTdUGtSbK1dWnzajr",
+      "position": "DDh79yhsSTd3BHDiscgdhypf22QEH6vB7tU4HpFZjdNg",
+      "positionNft": "CXKfiHrqqjhhb4iA48ZE919HPrDkNdxjHcV311sMwjsk",
+      "positionNftAccount": "44J4vbt9HXVJuYDf9r9EBzhUZiQWpbGsjt5Szt7VGbdu",
+      "tokenAMint": "54VQffs9PEKHA3GHriHzaozHVjofNDqgod2xqHQH42VQ",
+      "tokenBMint": "34HSEx1LsWo5SURHsVTwCdTqYTnYypoedFFLzPbam9ez",
+      "tokenAVault": "EC8a41REVkPQeM3gW4PCtDCsdz6Qj2s2pjBrkgq9ugT5",
+      "tokenBVault": "HwhSnTUxiFa4BvYgDUht3Kiogr5vFBXtPFbGqV1enyCr"
+    }
+  },
+  "markets": [
+    {
+      "address": "39BUkCw8AJPUA2TofBLbSVDwdTkP7u3hreQafxDiykpT",
+      "nonce": "1",
+      "creator": "GtQ8ZPUWHkbU4s2oRGNPmLh8ZX2wEfovCvHAp1d4Bigj",
+      "question": "Will Apple be worth more than Nvidia on December 31, 2026?",
+      "sideALabel": "Apple",
+      "sideBLabel": "Nvidia",
+      "pairA": "AAPL",
+      "pairB": "NVDA",
+      "collateralMint": "34HSEx1LsWo5SURHsVTwCdTqYTnYypoedFFLzPbam9ez",
+      "yesMint": "8U36ASjKocwgpTFyRCDwZ5oZPCHHN4KYNfdwgnSTHt6k",
+      "noMint": "7BJMBLNPB6RwUCnai9gZhtzL8Df6V283AaBqffWU3zU1",
+      "poolA": {
+        "pool": "FYX8vYTvSiBfZreQM3CEQicmn2UXyobC6xvmvD3KXK2z",
+        "position": "ML5V9omoHyr12DoJk1Rh8Y4TxqvpaWTvJkxPq6iLzue",
+        "positionNft": "AubXtDRK44e7yRAQyZDckt5rgcshFUkcnPy8YUQp7uCq",
+        "positionNftAccount": "4DL8pmkB3AXv3HttdDPeo926zBLQ2rB7m8rNeHg7VYyr",
+        "tokenAMint": "8U36ASjKocwgpTFyRCDwZ5oZPCHHN4KYNfdwgnSTHt6k",
+        "tokenBMint": "C9oHPeTZfKQ9D71uDxtCaKtAGGzngKts6oSEzhb71qNc",
+        "tokenAVault": "4zZaEcu7ouKhNLQ5ioqv2799hbg8gN25UF4ExuDaYoga",
+        "tokenBVault": "2szBsjyVfGTP5nFbSHqbQXJyYdtS5VtPcqR18v5KDVbf"
+      },
+      "poolB": {
+        "pool": "C8sRHdMeWuu95Rps2b3meg8zkhwB44PtC7ahMiwF8DVK",
+        "position": "A7w7xYDp32FjrMX3SE5KuXQJQ2cZtJfmyva55Dcf8fMc",
+        "positionNft": "AApsVDpaSAKcqamcZ33LuK2X77HrADMta76zNzYLftzX",
+        "positionNftAccount": "5DbNiYa8J9Bad7CYnaVLTejg88DhCLy2rSRgFFZr6vNL",
+        "tokenAMint": "7BJMBLNPB6RwUCnai9gZhtzL8Df6V283AaBqffWU3zU1",
+        "tokenBMint": "9WFdyTMbo2299xZUea5TpnxLEBQuHnvYYurWabtF377Y",
+        "tokenAVault": "ALpQYuZnFXHJ4fzkB5qJHGDnf3zCPeH67rCpt3zShSXi",
+        "tokenBVault": "7nVkyMgjJBnbLShLC7UP8fVrFEFuXPejxuMN2EAjHfM"
+      },
+      "poolsSet": true,
+      "template": {
+        "kind": "capCompare",
+        "feedA": "49f6b65cb1de6b10eaf75e7c03ca029c306d0357e91b5311b175084a5ad55688",
+        "feedB": "b1073854ed24cbc755dc527418f52b7d271f6cc967bbf8d8129112b18860a593",
+        "sharesA": "14800000000",
+        "sharesB": "24400000000"
+      },
+      "resolveTs": 1798750800,
+      "graceSecs": 86400
+    },
+    {
+      "address": "98NHcFxxJmERTajdcevNMUQ62YrKkEWSZXagFXetSmEy",
+      "nonce": "2",
+      "creator": "GtQ8ZPUWHkbU4s2oRGNPmLh8ZX2wEfovCvHAp1d4Bigj",
+      "question": "Will Bitcoin outperform Ethereum by December 31, 2026?",
+      "sideALabel": "Bitcoin",
+      "sideBLabel": "Ethereum",
+      "pairA": "BTC",
+      "pairB": "ETH",
+      "collateralMint": "34HSEx1LsWo5SURHsVTwCdTqYTnYypoedFFLzPbam9ez",
+      "yesMint": "AJCTMZVH1GcxoSAx9iPPcKxpR4VNPPCnyjQS3i7yYYKx",
+      "noMint": "CVpnnwNC2YPtrZKpYTmVjG3jffoRe9VB8FHL8ow7Tn6y",
+      "poolA": {
+        "pool": "498Q6CTzC1WjrGUSanNf4usatcggDnAXjFyuF5wdmbbh",
+        "position": "7YdfSpy8XDyjfn7Rk6BDQCitWDHJy8VPaEwAKH3mu4U9",
+        "positionNft": "J6yEeAn1ra6qQHwMUCCTbJijpX2JA2p2CEVDq54hbAqx",
+        "positionNftAccount": "5soFnTJkdPZYRoFqUfzBumuqhTTreiBa6DsEn1eKfNzw",
+        "tokenAMint": "AJCTMZVH1GcxoSAx9iPPcKxpR4VNPPCnyjQS3i7yYYKx",
+        "tokenBMint": "6JVAvAZjxJbZNaf46qRfmdACLZZSsDf3o9VYDppyYD3s",
+        "tokenAVault": "31JZQXBKyopYEsY7V1Uo6MKTFV8DbH6ynBNAbq4JN7GB",
+        "tokenBVault": "8i7kZ5wf8Qpa91g77CgVu9Y5Xmrr7k95Mo3wq8Jekqmb"
+      },
+      "poolB": {
+        "pool": "Ab7jb3MnxMoPXLtAWwPyMVCYmLc3BNnkMbestJeRxG24",
+        "position": "6vG1yspdbgSwmuAn44qfA7FMJDBUiVQSoohKvLoRFF13",
+        "positionNft": "5H5ebJQau58kmGpKWki37t84szvznPRAUMNhfTHqHv4K",
+        "positionNftAccount": "DwVJ4w5df7zsM2XEGZo5GW9TzHiJdKyZGqM7j9dJ7DCE",
+        "tokenAMint": "CVpnnwNC2YPtrZKpYTmVjG3jffoRe9VB8FHL8ow7Tn6y",
+        "tokenBMint": "54VQffs9PEKHA3GHriHzaozHVjofNDqgod2xqHQH42VQ",
+        "tokenAVault": "GQuVEKDSxdpwcPski16wM8ojrxjfpcktqS5m4fcQU28Y",
+        "tokenBVault": "7CcYTJWNVzLREcyumA7qN6P7EUpAF7VX8EnFEWED4Woj"
+      },
+      "poolsSet": true,
+      "template": {
+        "kind": "ratioOutperform",
+        "feedA": "e62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43",
+        "feedB": "ff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
+        "startRatioE9": "27083333333"
+      },
+      "resolveTs": 1798750800,
+      "graceSecs": 86400
+    },
+    {
+      "address": "8deG1ponHRnehtL2LhyuBXA4DvKLXdh6ssXQAi892ZXd",
+      "nonce": "3",
+      "creator": "GtQ8ZPUWHkbU4s2oRGNPmLh8ZX2wEfovCvHAp1d4Bigj",
+      "question": "Will Tesla still be worth more than Ford on December 31, 2026?",
+      "sideALabel": "Tesla",
+      "sideBLabel": "Ford",
+      "pairA": "TSLA",
+      "pairB": "F",
+      "collateralMint": "34HSEx1LsWo5SURHsVTwCdTqYTnYypoedFFLzPbam9ez",
+      "yesMint": "92d5RkYxKPiuCyGBSSbLoBS9pAaXAPexn68j2dx8hNyr",
+      "noMint": "AEJmE9J7LbsJwhSQFKu9DNyDgjvq34wTBu2NEr8Bi9XF",
+      "poolA": {
+        "pool": "9Te4ATUeRLSFEhBNZxaBZ6EGPvyoHhbt9ATYGKLk9EnZ",
+        "position": "8R3TCD5hnMyF3kURJeWW39iUBNMqiXoursYZAxa3Cx7G",
+        "positionNft": "DFQd8pn4n8HBaqy2fSGZt74KhKDixth9BggJLJs788vR",
+        "positionNftAccount": "69phgXmQmL64bdWwZ4LkhabXU55jqoWmfXvUrCzzDRCr",
+        "tokenAMint": "92d5RkYxKPiuCyGBSSbLoBS9pAaXAPexn68j2dx8hNyr",
+        "tokenBMint": "3jyNvdiW31i9D6jHzb8YPeSp6qTCixEhwxJ8ghq8e2Ej",
+        "tokenAVault": "8ZUsx6wEnS5YuCi2aqzosZ5MkFAfNhB2vwDYWp3BGWut",
+        "tokenBVault": "Ar3NpBx1QA18DHKoPreuym4GUv3PWsJCnTqWprTKCouB"
+      },
+      "poolB": {
+        "pool": "5q9MvPex6qpUonUHY66JLxfu6bbLHXw7ovj9aKBiY3J7",
+        "position": "EtfCco1vPQfM1ZJ44EHYX8agaJopaq6f7UeBXxTRC92",
+        "positionNft": "FmfwGqR35FrpBmEH9dHnqwz6a6fYYpr18wfcGqnLMb3q",
+        "positionNftAccount": "EtEP9LhK7doWazhBzyq6GjMbu96a7SttYAiLH2ePTkd4",
+        "tokenAMint": "AEJmE9J7LbsJwhSQFKu9DNyDgjvq34wTBu2NEr8Bi9XF",
+        "tokenBMint": "4A72p8147nw6FpboZSmbT4hnG8tJJ67g4eFAfJUQL97o",
+        "tokenAVault": "nvAHpszEpzMf89GedCnY5iJCcqUgCB2NAd6jAqebxw8",
+        "tokenBVault": "B7sGAS6a96cNaALcsH2eCv5sCoHPp9xq8tzBGyvGd7EA"
+      },
+      "poolsSet": true,
+      "template": {
+        "kind": "capCompare",
+        "feedA": "16dad506d7db8da01c87581c87ca897a012a153557d4d578c3b9c9e1bc0632f1",
+        "feedB": "6c267962d46cec4a5baf6105de67ef08e1306f75973ce6eb8db8527f06e28f33",
+        "sharesA": "3200000000",
+        "sharesB": "3900000000"
+      },
+      "resolveTs": 1798750800,
+      "graceSecs": 86400
+    }
+  ]
 }
