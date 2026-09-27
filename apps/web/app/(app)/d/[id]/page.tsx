@@ -56,8 +56,8 @@ function SettledPanel({ market, mine, owner }: { market: Market; mine: Position[
 
   return (
     <div>
-      <Stamp tone={st.winner === "a" ? "ink" : "vermilion"}>{w.label} wins</Stamp>
-      <p className="serif text-lg mt-4 max-w-[34ch]">
+      <Stamp tone={st.winner}>{w.label} wins</Stamp>
+      <p className="mt-4 text-lg max-w-[34ch] text-balance">
         Closed {oddsPair(st.closingOdds.a)}. {w.label} printed {usd(st.priceA)} against {l.label} at {usd(st.priceB)}{" "}
         at the bell.
       </p>
@@ -72,8 +72,8 @@ function SettledPanel({ market, mine, owner }: { market: Market; mine: Position[
       <div className="mt-6">
         {!owner ? (
           <div className="flex flex-wrap items-center gap-3">
-            <WalletButton variant="outline" />
-            <span className="text-sm text-ink-2">to redeem a winning side.</span>
+            <WalletButton variant="primary" />
+            <span className="text-sm text-muted-foreground">to redeem a winning side.</span>
           </div>
         ) : pos ? (
           <>
@@ -84,7 +84,7 @@ function SettledPanel({ market, mine, owner }: { market: Market; mine: Position[
           </>
         ) : (
           <>
-            <p className="serif text-lg text-ink-2">You hold no {w.label}. Nothing to redeem here.</p>
+            <p className="text-sm text-muted-foreground">You hold no {w.label}. Nothing to redeem here.</p>
             <StatusLine status={status} network={market.network} className="mt-3" />
           </>
         )}
@@ -94,9 +94,9 @@ function SettledPanel({ market, mine, owner }: { market: Market; mine: Position[
 }
 
 function YourCorner({ market, mine, owner }: { market: Market; mine: Position[]; owner: string | null }) {
-  if (!owner) return <p className="serif text-lg text-ink-2">Connect to see your corner.</p>;
+  if (!owner) return <p className="text-sm text-muted-foreground">Connect a wallet to see your position.</p>;
   if (mine.length === 0) {
-    return <p className="serif text-lg text-ink-2">No corner yet. Pick a side and the board moves with you.</p>;
+    return <p className="text-sm text-muted-foreground">No position yet. Pick a side and the board moves with you.</p>;
   }
   const resolved = market.status.kind === "resolved";
   return (
@@ -146,17 +146,17 @@ function HowItResolves({ market: m }: { market: Market }) {
       <dt>Template</dt>
       <dd>
         <span className="font-medium">{templateName(m)}.</span>{" "}
-        <span className="serif text-md text-ink-2">{ruleLine(m)}</span>
+        <span className="text-muted-foreground">{ruleLine(m)}</span>
       </dd>
 
       <dt>Feeds</dt>
       <dd className="flex flex-col gap-1">
         <span>
-          Pyth {m.a.feedName} <span className="text-xs text-ink-2 break-all">{m.a.feedId}</span>
+          Pyth {m.a.feedName} <span className="text-xs text-muted-foreground break-all font-mono">{m.a.feedId}</span>
         </span>
         {t.kind !== "PriceAbove" ? (
           <span>
-            Pyth {m.b.feedName} <span className="text-xs text-ink-2 break-all">{m.b.feedId}</span>
+            Pyth {m.b.feedName} <span className="text-xs text-muted-foreground break-all font-mono">{m.b.feedId}</span>
           </span>
         ) : null}
       </dd>
@@ -193,7 +193,8 @@ function HowItResolves({ market: m }: { market: Market }) {
       <dt>Fallback</dt>
       <dd>
         If Pyth is quiet for {Math.round(m.graceSecs / 3600)}h past the bell, the resolver{" "}
-        <span className="text-ink-2">{shortKey(m.resolver)}</span> settles manually with the printed prices.
+        <span className="text-muted-foreground font-mono">{shortKey(m.resolver)}</span> settles manually with the
+        printed prices.
       </dd>
 
       <dt>Collateral</dt>
@@ -222,18 +223,16 @@ export default function DuelPage() {
 
   if (isPending) {
     return (
-      <p className="pt-12 text-sm text-ink-2" role="status">
+      <p className="text-sm text-muted-foreground" role="status">
         Pulling the card.
       </p>
     );
   }
   if (!market) {
     return (
-      <div className="pt-12">
-        <EmptyState action={{ label: "Back to the board", href: "/" }}>
-          No duel by that name. The board lists every live one.
-        </EmptyState>
-      </div>
+      <EmptyState action={{ label: "Back to the board", href: "/board" }}>
+        No duel by that name. The board lists every live one.
+      </EmptyState>
     );
   }
 
@@ -245,23 +244,22 @@ export default function DuelPage() {
   const winner = market.status.kind === "resolved" ? market.status.winner : null;
 
   return (
-    <article className="pt-8 lg:pt-12 lg:grid lg:grid-cols-12 lg:gap-x-[var(--gap)]">
-      <Reveal as="header" i={0} className="lg:col-span-7">
-        <div className="flex items-center gap-2 label">
-          <span className="tnum">No. {String(market.no).padStart(2, "0")}</span>
-          <span aria-hidden="true">{MIDDOT}</span>
-          <span>{templateName(market)}</span>
-          <StatusStamp market={market} className="ml-2" />
+    <article className="lg:grid lg:grid-cols-12 lg:gap-x-8">
+      <Reveal as="header" i={0} className="lg:col-span-12">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="tag">{templateName(market)}</span>
+          <StatusStamp market={market} />
+          <span className="text-xs text-muted-foreground font-mono ml-1">No. {String(market.no).padStart(2, "0")}</span>
         </div>
         <MarketMatchup market={market} size="2xl" as="h1" className="mt-4" />
-        <p className="serif text-xl mt-6 max-w-[28ch] leading-[1.2] balance-text">{market.question}</p>
-        <p className="text-sm text-ink-2 mt-4 max-w-[52ch]">
+        <p className="mt-4 text-lg text-muted-foreground max-w-[44ch] text-pretty">{market.question}</p>
+        <p className="text-sm text-muted-foreground mt-2 max-w-[60ch]">
           {resolvesLine(market)}
           {!resolved && now ? ` ${resolvesIn(market.resolveTs, now)} to go.` : ""}
         </p>
       </Reveal>
 
-      <Reveal i={1} className="lg:col-span-5 lg:col-start-8 lg:row-start-1 lg:row-span-2 mt-10 lg:mt-0 board-hang">
+      <Reveal i={1} className="lg:col-span-5 lg:col-start-8 lg:row-start-2 mt-10 flex flex-col gap-4 lg:sticky lg:top-24 self-start">
         <ToteBoard
           aLabel={market.a.label}
           bLabel={bName}
@@ -270,34 +268,34 @@ export default function DuelPage() {
           winner={winner}
           updatedAt={market.oddsUpdatedAt}
         />
-        <div className="mt-8">
+        <div className="card card-pad">
           {resolved ? <SettledPanel market={market} mine={mine} owner={owner} /> : <BetPanel market={market} />}
         </div>
-        <section className="mt-12" aria-label="Your corner">
-          <SectionHead>Your corner</SectionHead>
+        <section className="card card-pad" aria-label="Your position">
+          <SectionHead>Your position</SectionHead>
           <YourCorner market={market} mine={mine} owner={owner} />
         </section>
       </Reveal>
 
-      <div className="lg:col-span-7 lg:row-start-2">
-        <Reveal as="section" i={2} className="mt-12 lg:mt-14" aria-label="Tale of the tape">
+      <div className="lg:col-span-7 lg:row-start-2 mt-10 flex flex-col gap-4">
+        <Reveal as="section" i={2} className="card card-pad" aria-label="Tale of the tape">
           <SectionHead aside={`${(market.a.holders + market.b.holders).toLocaleString("en-US")} holders`}>
             Tale of the tape
           </SectionHead>
           <TaleOfTheTape market={market} />
         </Reveal>
 
-        <Reveal as="section" i={3} className="mt-14 lg:mt-16" aria-label="Odds history">
+        <Reveal as="section" i={3} className="card card-pad" aria-label="Odds history">
           <SectionHead aside="30 days">Odds</SectionHead>
           {history.data ? <Chart points={history.data} aLabel={market.a.label} bLabel={bName} /> : null}
         </Reveal>
 
-        <Reveal as="section" i={4} className="mt-14 lg:mt-16" aria-label="Payouts">
+        <Reveal as="section" i={4} className="card card-pad" aria-label="Payouts">
           <SectionHead aside={`${market.epochs} epochs`}>Paid out</SectionHead>
           <Ledger market={market} epochs={ledger.data ?? []} />
         </Reveal>
 
-        <Reveal as="section" i={5} className="mt-16 lg:mt-20" aria-label="How it resolves">
+        <Reveal as="section" i={5} className="card card-pad" aria-label="How it resolves">
           <SectionHead>How it resolves</SectionHead>
           <HowItResolves market={market} />
         </Reveal>

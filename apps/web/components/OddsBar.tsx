@@ -3,8 +3,8 @@ import { cx } from "@/lib/cx";
 import { clamp01 } from "@/lib/format";
 
 /**
- * A 6px bar: ink from the left, vermilion from the right, meeting at the odds with a
- * 1px paper gap. Halves animate with scaleX, the gap with translateX; nothing resizes.
+ * A 6px bar: green from the left, red from the right, meeting at the odds with a 2px gap.
+ * Halves animate with scaleX, the gap with translateX; nothing resizes.
  */
 export function OddsBar({
   a,
@@ -22,7 +22,7 @@ export function OddsBar({
   return (
     <div
       className={cx("oddsbar", className)}
-      style={{ "--a": p, "--b": 1 - p } as CSSProperties}
+      style={{ "--a-frac": p, "--b-frac": 1 - p } as CSSProperties}
       role="img"
       aria-label={`${aLabel} ${pa} percent, ${bLabel} ${100 - pa} percent`}
     >

@@ -1,21 +1,15 @@
-import { Archivo, Instrument_Serif } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 
-/**
- * Archivo variable with the width axis, so headlines can sit at wdth 75 (fight-poster)
- * and the wordmark at wdth 62, from one file. Weight axis loads in full by default.
- */
-export const archivo = Archivo({
+/** Body, headlines and UI, as on the landing template. */
+export const sans = Geist({
   subsets: ["latin"],
   display: "swap",
-  axes: ["wdth"],
-  variable: "--font-archivo",
+  variable: "--font-geist-sans",
 });
 
-/** Editorial accent. Only the italic is used in the UI; roman is loaded for fallback safety. */
-export const instrument = Instrument_Serif({
+/** Kickers, labels, numerals, wallet keys. */
+export const mono = Geist_Mono({
   subsets: ["latin"],
-  weight: "400",
-  style: ["normal", "italic"],
   display: "swap",
-  variable: "--font-instrument",
+  variable: "--font-geist-mono",
 });

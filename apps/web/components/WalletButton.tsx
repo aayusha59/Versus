@@ -84,10 +84,10 @@ export function WalletButton({ variant = "outline", size = "md", block, short, c
 
   const label = owner
     ? source === "demo"
-      ? "Demo corner"
+      ? "Demo wallet"
       : shortKey(owner)
     : short
-      ? "Connect"
+      ? "Connect Wallet"
       : "Connect wallet";
 
   return (
@@ -99,9 +99,9 @@ export function WalletButton({ variant = "outline", size = "md", block, short, c
       }}
     >
       <Dialog.Trigger asChild>
-        <Button variant={owner ? "ghost" : variant} size={size} block={block} className={className}>
-          {owner ? <span aria-hidden="true" className="inline-block h-2 w-2 bg-ink" /> : null}
-          <span className={cx(owner && "normal-case tracking-normal font-medium")}>{label}</span>
+        <Button variant={owner ? "outline" : variant} size={size} block={block} className={className}>
+          {owner ? <span aria-hidden="true" className="inline-block h-1.5 w-1.5 rounded-full bg-side-a" /> : null}
+          <span className={cx(owner && "font-mono text-xs")}>{label}</span>
         </Button>
       </Dialog.Trigger>
       <Dialog.Portal>
@@ -110,13 +110,13 @@ export function WalletButton({ variant = "outline", size = "md", block, short, c
           {owner ? (
             <>
               <div className="flex items-baseline justify-between gap-4">
-                <Dialog.Title className="display text-xl">Your corner</Dialog.Title>
+                <Dialog.Title className="text-lg font-semibold">Your wallet</Dialog.Title>
                 <Dialog.Close className="btn btn-ghost btn-sm">Close</Dialog.Close>
               </div>
               <hr className="double mt-4" />
               <dl className="dl mt-4">
                 <dt>Wallet</dt>
-                <dd>{source === "demo" ? "Demo corner (no extension)" : walletName}</dd>
+                <dd>{source === "demo" ? "Demo wallet (no extension)" : walletName}</dd>
                 <dt>Address</dt>
                 <dd className="break-all text-sm">{owner}</dd>
               </dl>
@@ -135,10 +135,10 @@ export function WalletButton({ variant = "outline", size = "md", block, short, c
           ) : (
             <>
               <div className="flex items-baseline justify-between gap-4">
-                <Dialog.Title className="display text-xl">Pick a wallet</Dialog.Title>
+                <Dialog.Title className="text-lg font-semibold">Connect a wallet</Dialog.Title>
                 <Dialog.Close className="btn btn-ghost btn-sm">Close</Dialog.Close>
               </div>
-              <Dialog.Description className="serif text-lg text-ink-2 mt-1">
+              <Dialog.Description className="text-sm text-ink-2 mt-1">
                 One signature per bet. Payouts land in the same wallet.
               </Dialog.Description>
               <hr className="double mt-4" />
@@ -185,7 +185,7 @@ export function WalletButton({ variant = "outline", size = "md", block, short, c
                     disabled={burnerBusy}
                   >
                     <span className="font-semibold whitespace-nowrap">Burner (test wallet)</span>
-                    <span className={cx("serif text-md text-ink-2 text-right", burnerBusy && "pulse")}>
+                    <span className={cx("text-xs text-ink-2 text-right", burnerBusy && "pulse")}>
                       {burnerBusy ? "Loading the key." : "Keys live in this browser. Test funds only."}
                     </span>
                   </button>
@@ -202,7 +202,7 @@ export function WalletButton({ variant = "outline", size = "md", block, short, c
                       setOpen(false);
                     }}
                   >
-                    <span className="font-semibold">Demo corner</span>
+                    <span className="font-semibold">Demo wallet</span>
                     <span className="text-xs text-ink-2">1,000 mock USDC, no extension</span>
                   </button>
                 </>

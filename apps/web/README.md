@@ -60,16 +60,19 @@ operator funded first; `packages/sdk/deployments/devnet.json` ships as an empty 
 
 ## Routes
 
-- `/` The Board. Every duel as a full-width row: matchup, OddsBar, resolves-in, pair tokens,
-  fees paid out, one stamp. Live first, settled below with the loser struck through.
-- `/d/[id]` The Duel. Headline and question on the left, the split-flap ToteBoard hanging on the
-  right, BetPanel under it, then Tale of the tape, the 30-day odds chart, the payout ledger,
-  "Your corner" and "How it resolves". Settled duels show the winner stamp and a redeem action.
-- `/new` Make a duel. Template ToggleGroup, two asset Selects from `lib/registry.ts`, the bell
-  (UTC), seed USDC, a fee slider styled as a tote rail, and a live preview of the headline and
-  a 50/50 board. Submitting navigates to the new card.
-- `/me` My corners. Positions across duels with size, value, earned in the pair token, and
-  redeem buttons after resolution. Empty state teaches connecting a wallet.
+- `/` Landing. The v0 IRL template with Versus copy: full-viewport dithered background, hero,
+  "powered by" marquee (Solana, Pyth, Meteora, xStocks), three feature cards, the four steps, a
+  call to action, footer.
+- `/board` The board. Live duels as cards (matchup, question, odds bar, Back A / Back B), with
+  All / Stocks / Crypto / Settled filters.
+- `/d/[id]` The duel. Tale of the tape, odds chart, payout ledger and rules on the left; the
+  split-flap tote board, bet panel and your position sticky on the right. `?side=b` preselects
+  the right corner.
+- `/new` Create. Template chooser, two asset selects, the bell (UTC), seed USDC, fee slider, and
+  a live preview card.
+- `/positions` Positions (was `/me`, which redirects). Balance, value and earnings up top, one
+  card per side held, redeem after resolution.
+- `/how-it-works` The four steps, the mechanism, FAQ.
 
 ## Data layer
 
@@ -108,11 +111,11 @@ use `?cluster=custom&customUrl=<rpc>` on localnet.
 
 ## Design
 
-`DESIGN.md` at the repo root is binding. Tokens live in `app/globals.css` as CSS variables and
-are exposed to Tailwind through `@theme inline`; Tailwind's default palette, fonts, radii and
-shadows are wiped so nothing off-spec can slip in. Fonts are Archivo (variable, `wdth` axis for
-the condensed fight-poster headlines and the wordmark) and Instrument Serif italic, both via
-`next/font/google`. Components are under `components/`; none of them wrap content in a card.
+`DESIGN.md` at the repo root is binding. The landing page is the v0 "IRL event" template with
+only the copy changed; its primitives live in `components/ui`, `components/motion-primitives`,
+`components/Dither.tsx` and `components/DecryptedText.tsx`. Tokens are the template's shadcn
+neutral dark set plus the app's side colours (green for A, red for B), all in `app/globals.css`.
+Fonts are Geist and Geist Mono via `next/font/google`.
 
 ## Wallets
 

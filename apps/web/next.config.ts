@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  async redirects() {
+    return [{ source: "/me", destination: "/positions", permanent: false }];
+  },
   // The monorepo root, so file tracing does not wander up to a stray lockfile in the home directory.
   outputFileTracingRoot: path.join(__dirname, "../../"),
   // @versus/sdk ships TypeScript source (no build step); Next compiles it like app code.

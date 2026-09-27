@@ -140,16 +140,16 @@ export default function NewDuelPage() {
   };
 
   return (
-    <div className="pt-8 lg:pt-12 lg:grid lg:grid-cols-12 lg:gap-x-[var(--gap)]">
+    <div className="lg:grid lg:grid-cols-12 lg:gap-x-8">
       <Reveal as="header" i={0} className="lg:col-span-12">
-        <h1 className="display text-2xl">Make a duel</h1>
-        <p className="serif text-xl mt-4 max-w-[36ch] balance-text">
+        <p className="font-mono text-sm uppercase text-muted-foreground">Create</p>
+        <h1 className="mt-2 text-4xl font-semibold lg:text-5xl">Make a duel</h1>
+        <p className="mt-4 text-lg text-muted-foreground max-w-[44ch] text-pretty">
           Pick a template and two fighters. You seed both pools; the duel is live the moment it lands.
         </p>
-        <hr className="double mt-5" />
       </Reveal>
 
-      <form onSubmit={submit} className="lg:col-span-7 mt-8 flex flex-col gap-12" noValidate>
+      <form onSubmit={submit} className="lg:col-span-7 mt-10 flex flex-col gap-12" noValidate>
         <Reveal as="fieldset" i={1} className="flex flex-col gap-4">
           <legend className="label mb-4">Template</legend>
           <ToggleGroup.Root
@@ -179,13 +179,13 @@ export default function NewDuelPage() {
         <Reveal as="fieldset" i={2} className="rule-ink pt-6">
           <legend className="sr-only">Corners</legend>
           <div className="grid gap-8 sm:grid-cols-2">
-            <AssetSelect id="corner-a" label="Left corner" hint="prints in ink" value={aSym} onChange={setASym} />
+            <AssetSelect id="corner-a" label="Left corner" hint="prints green" value={aSym} onChange={setASym} />
             {meta.needsB ? (
               <div className="flex flex-col gap-1.5">
                 <AssetSelect
                   id="corner-b"
                   label="Right corner"
-                  hint="prints in vermilion"
+                  hint="prints red"
                   value={bSym}
                   onChange={setBSym}
                   exclude={aSym}
@@ -209,7 +209,7 @@ export default function NewDuelPage() {
               </Field>
             )}
           </div>
-          <p className="serif text-md text-ink-2 mt-5 max-w-[48ch]">
+          <p className="text-sm text-muted-foreground mt-5 max-w-[48ch]">
             {kind === "PriceAbove"
               ? `${a.label} holders are paid in ${a.pairSymbol}. The under side is paid in USDC.`
               : `${a.label} holders are paid in ${a.pairSymbol}; ${b?.label} holders in ${b?.pairSymbol}. Bet on one, earn it.`}
@@ -271,7 +271,7 @@ export default function NewDuelPage() {
               ))}
             </div>
           </div>
-          <p className="serif text-md text-ink-2 mt-4 max-w-[48ch]">
+          <p className="text-sm text-muted-foreground mt-4 max-w-[48ch]">
             Collected in the pair token only, so a bet on {a.label} pays {a.label} holders in {a.pairSymbol}.
           </p>
         </Reveal>
@@ -286,12 +286,12 @@ export default function NewDuelPage() {
             </>
           ) : (
             <>
-              <p className="serif text-lg">Connect a wallet to open the duel. The preview is live either way.</p>
+              <p className="text-sm text-muted-foreground">Connect a wallet to open the duel. The preview is live either way.</p>
               <div className="flex flex-wrap items-center gap-3">
-                <WalletButton variant="outline" />
+                <WalletButton variant="primary" />
                 {demoAvailable ? (
                   <Button variant="ghost" onClick={connectDemo}>
-                    Use the demo corner
+                    Use the demo wallet
                   </Button>
                 ) : null}
               </div>
@@ -300,7 +300,7 @@ export default function NewDuelPage() {
         </Reveal>
       </form>
 
-      <Reveal i={2} className="lg:col-span-5 mt-14 lg:mt-8 lg:sticky lg:top-8 self-start" aria-live="polite">
+      <Reveal i={2} className="lg:col-span-5 mt-14 lg:mt-8 lg:sticky lg:top-24 self-start card card-pad" aria-live="polite">
         <div className="flex items-center gap-2 label">
           <span>Preview</span>
           <span aria-hidden="true">{MIDDOT}</span>
@@ -309,8 +309,8 @@ export default function NewDuelPage() {
           <span>{meta.name}</span>
         </div>
         <Matchup {...headline} size="2xl" as="p" className="mt-3" />
-        <p className="serif text-lg mt-4 max-w-[30ch] balance-text">{question}</p>
-        <p className="text-sm text-ink-2 mt-3 max-w-[48ch]">
+        <p className="text-lg mt-4 max-w-[30ch] text-balance">{question}</p>
+        <p className="text-sm text-muted-foreground mt-3 max-w-[48ch]">
           {resolveTs
             ? composeResolves(buildTemplate(kind === "CapCompare" && errors.kind ? "RatioOutperform" : kind, a, b, thr), a.feedName, b?.feedName ?? null, resolveTs)
             : "Set the bell to see the resolution line."}

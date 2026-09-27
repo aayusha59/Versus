@@ -32,6 +32,16 @@ export function BetPanel({ market }: { market: Market }) {
   const { owner, demoAvailable, connectDemo } = useOwner();
   const [mode, setMode] = useState<Mode>("buy");
   const [side, setSide] = useState<Side>("a");
+
+  // "Back Nvidia" on the board links here with ?side=b.
+  useEffect(() => {
+    try {
+      const q = new URLSearchParams(window.location.search).get("side");
+      if (q === "a" || q === "b") setSide(q);
+    } catch {
+      /* no window */
+    }
+  }, []);
   const [raw, setRaw] = useState("");
   const [status, setStatus] = useState<Status>(IDLE);
   const [faucetStatus, setFaucetStatus] = useState<Status>(IDLE);
@@ -293,7 +303,7 @@ export function BetPanel({ market }: { market: Market }) {
         </>
       ) : (
         <div className="rule-ink pt-4">
-          <p className="serif text-lg">Connect a wallet to bet. The preview above is live either way.</p>
+          <p className="text-sm text-ink-2">Connect a wallet to bet. The preview above is live either way.</p>
           <div className="flex flex-wrap items-center gap-3 mt-3">
             <WalletButton variant="outline" />
             {demoAvailable ? (

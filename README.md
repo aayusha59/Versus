@@ -20,7 +20,7 @@ Details: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 | `programs/duel` | Anchor 0.32.1 program, ID `AN2TEyFH3zCsv5MENn2uo9LJx69J2EUC8iScAVeDbW25` | Built in WSL; 39 mocha and 10 unit tests pass |
 | `packages/sdk` | TypeScript client: program, pools, Pyth, routing, odds, rewards, registry | Verified on localnet |
 | `scripts` | `validator`, `bootstrap`, `bet`, `crank`, `resolve`, `faucet`, `smoke` | Verified on localnet |
-| `apps/web` | Next.js 15 app: board, duel, create, my corners | Complete; chain adapter in integration |
+| `apps/web` | Next.js 15 app: landing, board, duel, create, positions, how it works | Complete; chain adapter in integration |
 | `docs` | Architecture, pitch, submission, prior art | Written |
 
 ## Run it

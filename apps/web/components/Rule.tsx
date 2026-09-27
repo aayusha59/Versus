@@ -1,11 +1,12 @@
 import { cx } from "@/lib/cx";
 
-/** Broadsheet rules. "double" breaks sections; "hair" separates sub-sections; "ink" is a strong single. */
+/** Hairlines. "double"/"ink" are the stronger line, "hair" the faint one. */
 export function Rule({ kind = "hair", className }: { kind?: "double" | "hair" | "ink"; className?: string }) {
-  const k = kind === "double" ? "double" : kind === "ink" ? "rule-ink" : "rule";
+  const k = kind === "hair" ? "rule" : "rule-ink";
   return <hr className={cx(k, className)} />;
 }
 
+/** A section title with an optional right-hand aside, underlined once. */
 export function SectionHead({
   children,
   aside,
@@ -16,12 +17,9 @@ export function SectionHead({
   className?: string;
 }) {
   return (
-    <div className={cx("mb-5", className)}>
-      <div className="flex items-baseline justify-between gap-4">
-        <h2 className="label">{children}</h2>
-        {aside ? <div className="text-xs text-ink-2">{aside}</div> : null}
-      </div>
-      <hr className="double mt-2" />
+    <div className={cx("mb-4 flex items-baseline justify-between gap-4 pb-3 border-b border-line-2", className)}>
+      <h2 className="label text-fg">{children}</h2>
+      {aside ? <div className="text-xs text-fg-3 tnum">{aside}</div> : null}
     </div>
   );
 }

@@ -36,7 +36,7 @@ export function Ledger({ market, epochs, limit = 8 }: LedgerProps) {
 
   if (epochs.length === 0) {
     return (
-      <p className="serif text-lg text-ink-2">
+      <p className="text-sm text-ink-2">
         Nothing paid yet. The crank pays holders a few times a day once fees come in.
       </p>
     );
