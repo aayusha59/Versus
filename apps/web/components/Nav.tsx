@@ -31,8 +31,8 @@ export const HeroHeader = () => {
         <div className="mx-auto max-w-6xl px-6 transition-all duration-300">
           <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
             <div className="flex w-full items-center justify-between gap-12 lg:w-auto">
-              <Link href="/" aria-label="home" className="flex items-center space-x-2" onClick={() => setMenuState(false)}>
-                <Wordmark />
+              <Link href="/" aria-label="home" className="flex items-center" onClick={() => setMenuState(false)}>
+                <Wordmark iconOnly className="[&_svg]:h-5" />
               </Link>
 
               <button
@@ -46,7 +46,7 @@ export const HeroHeader = () => {
             </div>
 
             <div className="absolute inset-0 m-auto hidden size-fit lg:block">
-              <ul className="flex gap-8 text-sm">
+              <ul className="flex gap-14 text-sm">
                 {NAV.map((item) => (
                   <li key={item.href}>
                     <Link
