@@ -1,3 +1,4 @@
+import { ASSETS as SDK_ASSETS, type AssetSymbol } from "@versus/sdk/browser";
 import type { AssetKind } from "./types";
 
 export interface Asset {
@@ -21,6 +22,8 @@ export interface Asset {
 
 const B = 1_000_000_000;
 
+const feed = (symbol: AssetSymbol) => `0x${SDK_ASSETS[symbol].pythFeedId}`;
+
 export const ASSETS: Asset[] = [
   {
     symbol: "AAPL",
@@ -28,7 +31,7 @@ export const ASSETS: Asset[] = [
     label: "Apple",
     pairSymbol: "AAPLx",
     kind: "stock",
-    feedId: "0x49f6b65cb1de6b10eaf75e7c03ca029c306d0357e91b5311b175084a5ad55688",
+    feedId: feed("AAPL"),
     feedName: "AAPL/USD",
     shares: 14.78 * B,
     refPrice: 291.2,
@@ -41,7 +44,7 @@ export const ASSETS: Asset[] = [
     label: "Nvidia",
     pairSymbol: "NVDAx",
     kind: "stock",
-    feedId: "0xb1073854ed24cbc755dc527418f52b7d271f6cc967bbf8d8129112b18860a593",
+    feedId: feed("NVDA"),
     feedName: "NVDA/USD",
     shares: 24.4 * B,
     refPrice: 171.35,
@@ -54,7 +57,7 @@ export const ASSETS: Asset[] = [
     label: "Tesla",
     pairSymbol: "TSLAx",
     kind: "stock",
-    feedId: "0x16dad506d7db8da01c87581c87ca897a012a153557d4d578c3b9c9e1bc0632f1",
+    feedId: feed("TSLA"),
     feedName: "TSLA/USD",
     shares: 3.22 * B,
     refPrice: 412.6,
@@ -67,7 +70,7 @@ export const ASSETS: Asset[] = [
     label: "Ford",
     pairSymbol: "Fx",
     kind: "stock",
-    feedId: "0x8e7fb0c9eb9d2a2c3a1a3f8d7bd6c5a9c1f3e2d4b5a6c7d8e9f0a1b2c3d4e5f6",
+    feedId: feed("F"),
     feedName: "F/USD",
     shares: 3.98 * B,
     refPrice: 11.84,
@@ -80,7 +83,7 @@ export const ASSETS: Asset[] = [
     label: "S&P 500",
     pairSymbol: "SPYx",
     kind: "etf",
-    feedId: "0x19e09bb805456ada3979a7d1cbb4b6d63babc3a0f8e8a9509f68afa5c4c11cd5",
+    feedId: feed("SPY"),
     feedName: "SPY/USD",
     shares: 1.0 * B,
     refPrice: 668.4,
@@ -93,7 +96,7 @@ export const ASSETS: Asset[] = [
     label: "Gold",
     pairSymbol: "GLDx",
     kind: "commodity",
-    feedId: "0x765d2ba906dbc32ca17cc11f5310a89e9ee1f6420508c63861f2f8ba4ee34bb2",
+    feedId: feed("GLD"),
     feedName: "GLD/USD",
     shares: 0.31 * B,
     refPrice: 344.9,
@@ -106,7 +109,7 @@ export const ASSETS: Asset[] = [
     label: "Bitcoin",
     pairSymbol: "wBTC",
     kind: "crypto",
-    feedId: "0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43",
+    feedId: feed("BTC"),
     feedName: "BTC/USD",
     shares: null,
     refPrice: 109_420,
@@ -119,7 +122,7 @@ export const ASSETS: Asset[] = [
     label: "Ethereum",
     pairSymbol: "wETH",
     kind: "crypto",
-    feedId: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
+    feedId: feed("ETH"),
     feedName: "ETH/USD",
     shares: null,
     refPrice: 3_942,
@@ -132,7 +135,7 @@ export const ASSETS: Asset[] = [
     label: "Zcash",
     pairSymbol: "ZEC",
     kind: "crypto",
-    feedId: "0xbe9b59d178f0d6a97ab4c343bff2aa69caa1eaae3e9048a65788c529b125bb24",
+    feedId: feed("ZEC"),
     feedName: "ZEC/USD",
     shares: null,
     refPrice: 62.4,
@@ -145,7 +148,7 @@ export const ASSETS: Asset[] = [
     label: "Hyperliquid",
     pairSymbol: "HYPE",
     kind: "crypto",
-    feedId: "0x4279e31cc369bbcc2faf022b382b080e32a8e689ff20fbc530d2a603eb6cd98b",
+    feedId: feed("HYPE"),
     feedName: "HYPE/USD",
     shares: null,
     refPrice: 44.1,
@@ -158,7 +161,7 @@ export const ASSETS: Asset[] = [
     label: "Solana",
     pairSymbol: "SOL",
     kind: "crypto",
-    feedId: "0xef0d8b6fda2ceba41da15d4095d1da392a0d2f8ed0c6c7bc0f4cfac8c280b56d",
+    feedId: feed("SOL"),
     feedName: "SOL/USD",
     shares: null,
     refPrice: 214.7,
